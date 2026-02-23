@@ -28,6 +28,10 @@ import {
   X_URL
 } from "@/lib/constants";
 import { FaXTwitter } from "react-icons/fa6";
+
+import { contributingGuides } from "@/lib/contributing";
+
+
 export default function SearchCommand({
   className,
   size
@@ -121,6 +125,21 @@ export default function SearchCommand({
               </Link>
             </CommandItem>
           </CommandGroup>
+
+          <CommandGroup heading={"Contributing guides".toUpperCase()}>
+            {contributingGuides.map(item => (
+              <CommandItem asChild key={item.title}>
+                <Link
+                  href={item.docs as Route}
+                  onClick={() => setOpen(!open)}
+                  className="mb-0.5 w-full cursor-pointer">
+                  <CircleIcon className="text-muted-secondary size-2.5" />{" "}
+                  {item.title}
+                </Link>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+
           {guideItems.length > 0 && (
             <CommandGroup heading={ITEM_GROUP_NAMING.guide.toUpperCase()}>
               {guideItems.map(item => (

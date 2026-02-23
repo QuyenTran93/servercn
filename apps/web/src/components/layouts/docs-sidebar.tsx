@@ -17,7 +17,8 @@ export const ITEM_GROUP_NAMING = {
   component: "Components",
   blueprint: "Blueprints",
   schema: "Schemas",
-  page: "Pages"
+  page: "Pages",
+  contributing: "Contributing"
 } as const;
 
 export const PAGE_ITEMS = [
@@ -40,6 +41,10 @@ export const PAGE_ITEMS = [
   {
     title: "Contributors",
     url: "/contributors"
+  },
+  {
+    title: "Contributing",
+    url: "/contributing"
   }
 ];
 
@@ -67,6 +72,10 @@ const navSections = [
   {
     title: ITEM_GROUP_NAMING.schema,
     items: getTypeItems("schema")
+  },
+  {
+    title: ITEM_GROUP_NAMING.contributing,
+    items: getTypeItems("contributing")
   },
   {
     title: ITEM_GROUP_NAMING.page,

@@ -25,6 +25,10 @@ export const siteConfig = {
     {
       label: "Schemas",
       href: "/schemas"
+    },
+    {
+      label: "Contributing",
+      href: "/contributing"
     }
   ],
 

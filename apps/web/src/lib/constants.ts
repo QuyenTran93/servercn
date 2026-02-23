@@ -3,7 +3,7 @@ export const COOKIE_THEME_KEY = "servercn-code-theme";
 export const DEFAULT_CODE_THEME = "vesper";
 export const CODE_THEME_BG_KEY = "servercn-code-theme-bg";
 
-export const DISCORD_URL = "https://discord.gg/Cutb3vPG";
+export const DISCORD_URL = "https://discord.gg/2fXqnTXF8d";
 
 export const BASE_GITHUB_URL = "https://github.com/akkaldhami";
 
