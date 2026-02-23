@@ -1,18 +1,21 @@
 {
+  "$schema": "https://servercn.vercel.app/schema/component.registry.json",
   "slug": "verify-auth-middleware",
-  "title": "Verify Authentication Middleware",
-  "type": "component",
-  "stacks": ["express"],
-  "architectures": ["feature", "mvc"],
-  "templates": {
-    "express": {
-      "mvc": "components/verify-auth-middleware/express/mvc",
-      "feature": "components/verify-auth-middleware/express/feature"
+  "runtimes": {
+    "node": {
+      "frameworks": {
+        "express": {
+          "templates": {
+            "mvc": "verify-auth-middleware/mvc",
+            "feature": "verify-auth-middleware/feature"
+          },
+          "dependencies": {
+            "runtime": ["pino", "pino-pretty"],
+            "dev": []
+          },
+          "env": ["PORT", "LOG_LEVEL", "NODE_ENV"]
+        }
+      }
     }
-  },
-  "dependencies": {
-    "runtime": ["express", "dotenv", "pino", "pino-pretty", "pino-http"],
-    "dev": ["@types/express"]
-  },
-  "env": ["PORT", "LOG_LEVEL", "NODE_ENV"]
+  }
 }

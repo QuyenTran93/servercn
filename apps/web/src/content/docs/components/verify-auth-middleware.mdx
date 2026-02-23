@@ -1173,50 +1173,26 @@ This ensures **seamless token rotation** without forcing the user to re-login.
 
 This component requires additional ServerCN components.
 
-**_👉 Note:_** _You do not need to install any servercn dependencies manually. Installing this component will automatically install all required servercn dependencies. Manual installation is optional if you prefer to manage dependencies yourself._
+<Note text="👉 You do not need to install any ServerCN components manually.
+Running this component installer will automatically install all required components.
+Manual installation is optional and only recommended if you prefer fine-grained components control" />
+
 
 ### 1. Install ServerCN components(Optional)
 
-- **HTTP Status Codes:**
+- [HTTP Status Codes](/docs/components/http-status-codes)
 
-<PackageManagerTabs command="npx servercn-cli add http-status-codes" />
+- [Api Response Handler](/docs/components/response-formatter)
 
-Documentation:
-[HTTP Status Codes](/docs/components/http-status-codes)
+- [Api Error Handler](/docs/components/error-handler)
 
-- **Api Response Handler:**
+- [JWT Utils](/docs/components/jwt-utils)
 
-<PackageManagerTabs command="npx servercn-cli add response-formatter" />
-
-Documentation:
-[Api Response Handler](/docs/components/response-formatter)
-
-- **Api Error Handler:**
-
-<PackageManagerTabs command="npx servercn-cli add error-handler" />
-
-Documentation:
-[Api Error Handler](/docs/components/error-handler)
-
-- **JWT Authentication:**
-
-<PackageManagerTabs command="npx servercn-cli add jwt-utils" />
-
-Documentation:
-[JWT Authentication](/docs/components/jwt-auth)
-
-- **Logger:**
-
-<PackageManagerTabs command="npx servercn-cli add logger-winston" />
-
-Documentation:
-[Logger](/docs/components/logger)
+- [Logger](/docs/components/logger)
 
 ### 2. Install this component
 
 <PackageManagerTabs command="npx servercn-cli add verify-auth-middleware" />
-
-> ⚠️ If this dependency is not installed, the component will not function correctly.
 
 ## Prerequisites
 
@@ -1544,7 +1520,7 @@ export async function verifyAuthentication(
 
 <Code children="src/routes/user.routes.ts" />
 
-```ts
+```ts {2} /verifyAuthentication,/
 import { Router } from "express";
 import { verifyAuthentication } from "../middlewares/verify-auth";
 
