@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "version": "1.0.0",
+  "schemas": [
+    {
+      "name": "registry:servercn.config",
+      "description": "Configuration schema for a ServerCN project",
+      "url": "https://servercn.vercel.app/schema/servercn.config.registry.json"
+    },
+    {
+      "name": "registry:component",
+      "description": "Registry schema that defines individual ServerCN components",
+      "url": "https://servercn.vercel.app/schema/component.registry.json"
+    },
+    {
+      "name": "registry:blueprint",
+      "description": "Registry schema that defines ServerCN blueprints",
+      "url": "https://servercn.vercel.app/schema/blueprint.registry.json"
+    },
+    {
+      "name": "registry:foundation",
+      "description": "Registry schema that defines ServerCN project foundations",
+      "url": "https://servercn.vercel.app/schema/foundation.registry.json"
+    },
+    {
+      "name": "registry:tooling",
+      "description": "Registry schema that defines ServerCN development tooling",
+      "url": "https://servercn.vercel.app/schema/tooling.registry.json"
+    },
+    {
+      "name": "registry:schema",
+      "description": "Registry schema that defines database and domain schemas",
+      "url": "https://servercn.vercel.app/schema/schema.registry.json"
+    }
+  ]
+}
