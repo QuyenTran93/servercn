@@ -2,14 +2,14 @@ import type { MDXComponents } from "mdx/types";
 import { Pre } from "./pre";
 
 import PackageManagerTabs from "./package-manager-tabs";
-import FileTree from "../file-viewer/file-tree";
-import BackendStructureViewer from "../file-viewer/backend-structure-viewer";
+import FileTree from "@/components/file-viewer/file-tree";
+import BackendStructureViewer from "@/components/file-viewer/backend-structure-viewer";
 import Code from "./custom-code";
 import Note from "./note";
 import LNote from "./list-note";
 import Warning from "./warning";
 import { cn } from "@/lib/utils";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const mdxComponents: MDXComponents = {
   pre: Pre,

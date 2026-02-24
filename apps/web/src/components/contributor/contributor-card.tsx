@@ -1,6 +1,6 @@
 import React from "react";
 import { IContributor } from "@/app/(app)/contributors/page";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { FaGithub } from "react-icons/fa6";
 import { Route } from "next";
 import Link from "next/link";
