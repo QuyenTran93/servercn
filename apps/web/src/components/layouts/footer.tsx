@@ -127,6 +127,14 @@ const footerLinkGroups: FooterLinkGroup[] = [
         title: "Blueprints",
         href: "/blueprints"
       },
+      {
+        title: "Contributing",
+        href: "/contributing"
+      },
+      {
+        title: "Contributors",
+        href: "/contributors"
+      },
       { title: "Models", href: "/models" },
       { title: "GitHub", href: "https://github.com/akkaldhami/servercn" }
     ]
