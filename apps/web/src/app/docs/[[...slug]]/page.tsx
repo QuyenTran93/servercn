@@ -112,7 +112,6 @@ function getDocPath(slug?: string[]) {
   }
 
   if (slug.length === 2 && slug[0] === "contributing") {
-    console.log({ slug });
     return path.join(DOCS_PATH, `${slug.join("/")}.mdx`);
   }
 
