@@ -1,4 +1,3 @@
-
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { SubHeading } from "@/components/ui/sub-heading";
@@ -6,11 +5,11 @@ import { contributingGuides } from "@/lib/contributing";
 import { Metadata, Route } from "next";
 import Link from "next/link";
 
-export const metadata:Metadata = {
+export const metadata: Metadata = {
   title: "Contributing to ServerCN",
-  description: "Learn how to contribute to ServerCN by adding components, blueprints, foundations, schemas, and tooling.",
+  description:
+    "Learn how to contribute to ServerCN by adding components, blueprints, foundations, schemas, and tooling."
 };
-
 
 export default function ContributingPage() {
   return (
@@ -25,21 +24,18 @@ export default function ContributingPage() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {contributingGuides.map(guide => (
-            <Link
-                key={guide.title}
-               href={guide.docs as Route}
-               className="group bg-background border-hover hover:bg-card-hover relative rounded-xl border p-5">
-           
-               <h3 className="text-lg font-medium">{guide.title}</h3>
-         
-               <p className="text-muted-primary mt-2 line-clamp-4 text-sm">
-                 {guide.description}
-               </p>
-         
-               <div className="text-muted-secondary group-hover:text-foreground mt-4 flex items-center text-sm font-medium duration-300 group-hover:underline">
-                 View docs
-               </div>
-             </Link>
+          <Link
+            key={guide.title}
+            href={guide.docs as Route}
+            className="group bg-background border-hover hover:bg-card-hover relative rounded-xl border p-5">
+            <h3 className="text-lg font-medium underline-offset-4 group-hover:underline">
+              {guide.title}
+            </h3>
+
+            <p className="text-muted-primary mt-2 line-clamp-4 text-sm">
+              {guide.description}
+            </p>
+          </Link>
         ))}
       </div>
     </Container>
