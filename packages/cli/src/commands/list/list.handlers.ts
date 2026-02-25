@@ -1,12 +1,14 @@
 import { SERVERCN_URL } from "@/constants/app.constants";
-import { loadRegistry } from "@/lib/registry-list";
-import type { RegistryComponent, RegistryType } from "@/types";
+import { loadRegistryItems } from "@/lib/registry-list";
+
+import type { RegistryData, RegistryType } from "@/types";
 import { highlighter } from "@/utils/highlighter";
 import { logger } from "@/utils/logger";
 
 export type listOptionType = {
   json?: boolean;
   all?: boolean;
+  local?: boolean;
 };
 
 type listOverviewType = {
@@ -24,14 +26,14 @@ function padStart(num: number = 0) {
 }
 
 export async function listOverview(options: listOptionType) {
-  const components = await loadRegistry("component");
-  const blueprints = await loadRegistry("blueprint");
-  const foundations = await loadRegistry("foundation");
-  const toolings = await loadRegistry("tooling");
-  const schemas = await loadRegistry("schema");
+  const components = await loadRegistryItems("component", options.local);
+  const blueprints = await loadRegistryItems("blueprint", options.local);
+  const foundations = await loadRegistryItems("foundation", options.local);
+  const toolings = await loadRegistryItems("tooling", options.local);
+  const schemas = await loadRegistryItems("schema", options.local);
 
   if (options.all) {
-    return await getRegistryLists("blueprint", options)
+    return await getRegistryLists("blueprint", options);
   }
 
   const data: listOverviewType = {
@@ -82,25 +84,26 @@ export async function listOverview(options: listOptionType) {
   console.log(
     `${highlighter.create(`
 ───────────────────────────────────────────────────────────
-│ Type         │ alias │ Total │ Command               │
+│ Type         │ alias    │ Total │ Command                │
 ───────────────────────────────────────────────────────────
-│ Components   │   cp     │  ${padStart(components.length)}   │ npx servercn-cli list cp  │ 
-│ Blueprints   │   bp     │  ${padStart(blueprints.length)}   │ npx servercn-cli list bp  │
-│ Foundations  │   fd     │  ${padStart(foundations.length)}   │ npx servercn-cli list fd  │
-│ Tooling      │   tl     │  ${padStart(toolings.length)}   │ npx servercn-cli list tl  │
-│ Schemas      │   sc     │  ${padStart(schemas.length)}   │ npx servercn-cli list sc  │
+│ Components   │   cp     │  ${padStart(components.length)}   │ npx servercn-cli ls cp │ 
+│ Blueprints   │   bp     │  ${padStart(blueprints.length)}   │ npx servercn-cli ls bp │
+│ Foundations  │   fd     │  ${padStart(foundations.length)}   │ npx servercn-cli ls fd │
+│ Tooling      │   tl     │  ${padStart(toolings.length)}   │ npx servercn-cli ls tl │
+│ Schemas      │   sc     │  ${padStart(schemas.length)}   │ npx servercn-cli ls sc │
 ───────────────────────────────────────────────────────────`)}`
   );
   logger.log(`
  Explore:
- npx servercn-cli list <type | alias>
- npx servercn-cli list <type | alias> --json
+ npx servercn-cli ls <type | alias>
+ npx servercn-cli ls <type | alias> --json
 
  Examples:
- npx servercn-cli list components
- npx servercn-cli list cp
- npx servercn-cli ls fd
- npx servercn-cli list schemas
+ npx servercn-cli ls component
+ npx servercn-cli ls cp
+ npx servercn-cli ls foundation
+ npx servercn-cli ls fd --json
+ npx servercn-cli ls schema
  npx servercn-cli ls sc --json
 `);
 }
@@ -109,6 +112,7 @@ type listRegistryDataType = {
   type: RegistryType;
   command: string;
   total: number;
+  alias?: "cp" | "bp" | "fd" | "tl" | "sc";
   items: {
     name: string;
     command: string;
@@ -116,7 +120,10 @@ type listRegistryDataType = {
 };
 
 export async function listComponents(options: listOptionType) {
-  const components: RegistryComponent[] = await loadRegistry("component");
+  const components: RegistryData[] = await loadRegistryItems(
+    "component",
+    options.local
+  );
   const data = {
     type: "component",
     command: `npx servercn-cli add <component-name>`,
@@ -148,14 +155,15 @@ export async function listComponents(options: listOptionType) {
 }
 
 export async function listFoundations(options: listOptionType) {
-  const foundations = await loadRegistry("foundation");
+  const foundations = await loadRegistryItems("foundation", options.local);
 
   const data = {
     type: "foundation",
     command: `npx servercn-cli init <foundation-name>`,
     total: foundations.length,
-    items: foundations.
-      sort((a, b) => a.slug.localeCompare(b.slug)).map(c => ({
+    items: foundations
+      .sort((a, b) => a.slug.localeCompare(b.slug))
+      .map(c => ({
         name: c.slug,
         command: `npx servercn-cli init ${c.slug}`
       }))
@@ -184,16 +192,16 @@ export async function listFoundations(options: listOptionType) {
 }
 
 export async function listTooling(options: listOptionType) {
-
-  const toolings = await loadRegistry("tooling");
+  const toolings = await loadRegistryItems("tooling", options.local);
 
   const data = {
     type: "tooling",
+    alias: "tl",
     command: `npx servercn-cli add tooling <tooling-name>`,
     total: toolings.length,
     items: toolings.map(c => ({
       name: c.slug,
-      command: `npx servercn-cli add tooling ${c.slug}`
+      command: `npx servercn-cli add tl ${c.slug}`
     }))
   } satisfies listRegistryDataType;
 
@@ -210,26 +218,28 @@ export async function listTooling(options: listOptionType) {
   });
   logger.break();
   logger.info(`Usage:`);
-  logger.muted(` Run: npx servercn-cli add tooling <tooling-name>`);
-  logger.muted(` Ex: npx servercn-cli add tooling commitlint`);
-  logger.muted(` Ex: npx servercn-cli add tooling prettier`);
-  logger.muted(` Ex: npx servercn-cli add tooling lint-staged`);
-  logger.muted(` Ex: npx servercn-cli add tooling eslint husky typescript `);
+  logger.muted(` Run: npx servercn-cli add tl <tooling-name>`);
+  logger.muted(` Ex: npx servercn-cli add tl commitlint`);
+  logger.muted(` Ex: npx servercn-cli add tl prettier`);
+  logger.muted(` Ex: npx servercn-cli add tl lint-staged`);
+  logger.muted(` Ex: npx servercn-cli add tl eslint husky typescript `);
   logger.log(` Learn more: ${SERVERCN_URL}/docs`);
   logger.break();
 }
 
 export async function listSchemas(options: listOptionType) {
-  const schemas = await loadRegistry("schema");
+  const schemas = await loadRegistryItems("schema", options.local);
+
   const data = {
     type: "schema",
+    alias: "sc",
     command: `npx servercn-cli add schema <schema-name>`,
     total: schemas.length,
     items: schemas
       .sort((a, b) => a.slug.localeCompare(b.slug))
       .map(c => ({
         name: c.slug,
-        command: `npx servercn-cli add schema ${c.slug}`
+        command: `npx servercn-cli add sc ${c.slug}`
       }))
   } satisfies listRegistryDataType;
 
@@ -247,23 +257,23 @@ export async function listSchemas(options: listOptionType) {
   logger.break();
   logger.info(`Usage:`);
   logger.muted(` Run: npx servercn-cli add schema <schema-name>`);
-  logger.muted(` Ex: npx servercn-cli add schema auth`);
-  logger.muted(` Ex: npx servercn-cli add schema auth/user`);
+  logger.muted(` Ex: npx servercn-cli add sc auth`);
+  logger.muted(` Ex: npx servercn-cli add sc auth/user`);
   logger.log(` Learn more: ${SERVERCN_URL}/schemas`);
   logger.break();
 }
 
 export async function listBlueprints(options: listOptionType) {
-
-  const blueprints = await loadRegistry("blueprint");
+  const blueprints = await loadRegistryItems("blueprint", options.local);
 
   const data = {
     type: "blueprint",
+    alias: "bp",
     command: `npx servercn-cli add blueprint <blueprint-name>`,
     total: blueprints.length,
     items: blueprints.map(c => ({
       name: c.slug,
-      command: `npx servercn-cli add blueprint ${c.slug}`
+      command: `npx servercn-cli add bp ${c.slug}`
     }))
   } satisfies listRegistryDataType;
 
@@ -281,7 +291,7 @@ export async function listBlueprints(options: listOptionType) {
   logger.break();
   logger.info(`Usage:`);
   logger.muted(` Run: npx servercn-cli add blueprint <blueprint-name>`);
-  logger.muted(` Ex: npx servercn-cli add blueprint stateless-auth`);
+  logger.muted(` Ex: npx servercn-cli add bp stateless-auth`);
   logger.log(` Learn more: ${SERVERCN_URL}/blueprints`);
   logger.break();
 }
@@ -291,17 +301,17 @@ export async function getRegistryLists(
   options?: listOptionType
 ) {
   if (options?.all && options.json) {
-    await listComponents({ json: true });
-    await listSchemas({ json: true });
-    await listBlueprints({ json: true });
-    await listTooling({ json: true });
-    await listFoundations({ json: true });
+    await listComponents({ json: true, local: options.local });
+    await listSchemas({ json: true, local: options.local });
+    await listBlueprints({ json: true, local: options.local });
+    await listTooling({ json: true, local: options.local });
+    await listFoundations({ json: true, local: options.local });
   } else if (options?.all) {
-    await listComponents({ json: false });
-    await listSchemas({ json: false });
-    await listBlueprints({ json: false });
-    await listTooling({ json: false });
-    await listFoundations({ json: false });
+    await listComponents({ json: false, local: options.local });
+    await listSchemas({ json: false, local: options.local });
+    await listBlueprints({ json: false, local: options.local });
+    await listTooling({ json: false, local: options.local });
+    await listFoundations({ json: false, local: options.local });
   } else {
     switch (type) {
       case "component":

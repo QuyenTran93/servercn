@@ -10,8 +10,8 @@ export const servercnConfig = (
 
     project: {
       root: config.project.root,
-      srcDir: config.project.srcDir,
       type: config.project.type,
+      packageManager: config.project.packageManager
     },
 
     stack: config.stack,

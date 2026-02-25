@@ -16,6 +16,7 @@ export function registryListCommands(program: Command) {
     .description("List available ServerCN resources")
     .option("--json", "Output resources as JSON")
     .option("--all", "Display all available registries")
+    .option("--local", "Display only local registries")
     .enablePositionalOptions()
     .action((options: listOptionType) => {
       listOverview(options);
@@ -26,7 +27,7 @@ export function registryListCommands(program: Command) {
   }
 
   list
-    .command("components")
+    .command("component")
     .alias("cp")
     .description("List available components")
     .action((_, cmd) => {
@@ -34,7 +35,7 @@ export function registryListCommands(program: Command) {
     });
 
   list
-    .command("foundations")
+    .command("foundation")
     .alias("fd")
     .description("List available foundations")
     .action((_, cmd) => {
@@ -50,7 +51,7 @@ export function registryListCommands(program: Command) {
     });
 
   list
-    .command("schemas")
+    .command("schema")
     .alias("sc")
     .description("List available schemas")
     .action((_, cmd) => {
@@ -58,7 +59,7 @@ export function registryListCommands(program: Command) {
     });
 
   list
-    .command("blueprints")
+    .command("blueprint")
     .alias("bp")
     .description("List available blueprints")
     .action((_, cmd) => {
