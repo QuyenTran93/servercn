@@ -13,11 +13,10 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "node_modules/**",
-    // "cli/**",
     ".source/**",
     "**/__index__.tsx",
     "commitlint.config.ts",
-    "packages/templates/"
+    "**/packages/templates/**"
   ]),
   {
     rules: {

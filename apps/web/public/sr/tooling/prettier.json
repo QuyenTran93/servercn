@@ -1,0 +1,24 @@
+{
+  "$schema": "https://servercn.vercel.app/schema/tooling.registry.json",
+  "slug": "prettier",
+  "templates": {
+    "base": {
+      "files": [
+        {
+          "type": "tooling",
+          "path": ".prettierrc",
+          "content": "{\n  \"singleQuote\": false,\n  \"semi\": true,\n  \"tabWidth\": 2,\n  \"trailingComma\": \"none\",\n  \"bracketSameLine\": true,\n  \"arrowParens\": \"avoid\",\n  \"endOfLine\": \"lf\"\n}\n"
+        },
+        {
+          "type": "tooling",
+          "path": ".prettierignore",
+          "content": "dist\r\nnode_modules\r\ncoverage\r\n.env\r\n.env.*\r\n!.env.example\r\n"
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "runtime": [],
+    "dev": ["prettier"]
+  }
+}

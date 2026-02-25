@@ -1,0 +1,154 @@
+{
+  "name": "servercn",
+  "homepage": "https://servercn.vercel.app",
+  "items": [
+    {
+      "type": "component",
+      "slug": "verify-auth-middleware"
+    },
+    {
+      "type": "component",
+      "slug": "validate-objectid"
+    },
+    {
+      "type": "component",
+      "slug": "swagger-docs"
+    },
+    {
+      "type": "component",
+      "slug": "shutdown-handler"
+    },
+    {
+      "type": "component",
+      "slug": "security-header"
+    },
+    {
+      "type": "component",
+      "slug": "response-formatter"
+    },
+    {
+      "type": "component",
+      "slug": "request-validator"
+    },
+    {
+      "type": "component",
+      "slug": "rbac"
+    },
+    {
+      "type": "component",
+      "slug": "rate-limiter"
+    },
+    {
+      "type": "component",
+      "slug": "password-hashing"
+    },
+    {
+      "type": "component",
+      "slug": "oauth"
+    },
+    {
+      "type": "component",
+      "slug": "not-found-handler"
+    },
+    {
+      "type": "component",
+      "slug": "logger"
+    },
+    {
+      "type": "component",
+      "slug": "jwt-utils"
+    },
+    {
+      "type": "component",
+      "slug": "http-status-codes"
+    },
+    {
+      "type": "component",
+      "slug": "health-check"
+    },
+    {
+      "type": "component",
+      "slug": "global-error-handler"
+    },
+    {
+      "type": "component",
+      "slug": "generate-otp-token"
+    },
+    {
+      "type": "component",
+      "slug": "file-upload"
+    },
+    {
+      "type": "component",
+      "slug": "error-handler"
+    },
+    {
+      "type": "component",
+      "slug": "env"
+    },
+    {
+      "type": "component",
+      "slug": "email-service"
+    },
+    {
+      "type": "component",
+      "slug": "cron-job"
+    },
+    {
+      "type": "component",
+      "slug": "async-handler"
+    },
+    {
+      "type": "blueprint",
+      "slug": "stateless-auth"
+    },
+    {
+      "type": "schema",
+      "slug": "todo"
+    },
+    {
+      "type": "schema",
+      "slug": "auth"
+    },
+    {
+      "type": "foundation",
+      "slug": "mongoose-starter"
+    },
+    {
+      "type": "foundation",
+      "slug": "express-server"
+    },
+    {
+      "type": "foundation",
+      "slug": "drizzle-pg-starter"
+    },
+    {
+      "type": "foundation",
+      "slug": "drizzle-mysql-starter"
+    },
+    {
+      "type": "tooling",
+      "slug": "typescript"
+    },
+    {
+      "type": "tooling",
+      "slug": "prettier"
+    },
+    {
+      "type": "tooling",
+      "slug": "lint-staged"
+    },
+    {
+      "type": "tooling",
+      "slug": "husky"
+    },
+    {
+      "type": "tooling",
+      "slug": "eslint"
+    },
+    {
+      "type": "tooling",
+      "slug": "commitlint"
+    }
+  ]
+}

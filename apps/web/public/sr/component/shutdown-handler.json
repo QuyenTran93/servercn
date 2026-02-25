@@ -1,0 +1,37 @@
+{
+  "$schema": "https://servercn.vercel.app/schema/component.registry.json",
+  "slug": "shutdown-handler",
+  "runtimes": {
+    "node": {
+      "frameworks": {
+        "express": {
+          "dependencies": {
+            "runtime": [],
+            "dev": []
+          },
+          "env": [],
+          "architectures": {
+            "mvc": {
+              "files": [
+                {
+                  "type": "file",
+                  "path": "src/utils/shutdown.ts",
+                  "content": "import { Server } from \"http\";\n\n/**\n * Gracefully shuts down the server when a termination signal is received.\n * @param server The HTTP server instance to close.\n */\nexport const configureGracefulShutdown = (server: Server) => {\n  const signals = [\"SIGTERM\", \"SIGINT\"];\n\n  signals.forEach(signal => {\n    process.on(signal, () => {\n      console.log(`\\n${signal} signal received. Shutting down gracefully...`);\n\n      server.close(err => {\n        if (err) {\n          console.error(\"Error during server close:\", err);\n          process.exit(1);\n        }\n\n        console.log(\"HTTP server closed.\");\n        // Add additional cleanup logic here (e.g., closing database connections)\n        process.exit(0);\n      });\n\n      // Force shutdown after 10 seconds if graceful shutdown fails\n      setTimeout(() => {\n        console.error(\n          \"Could not close connections in time, forcefully shutting down\"\n        );\n        process.exit(1);\n      }, 10000);\n    });\n  });\n};\n"
+                }
+              ]
+            },
+            "feature": {
+              "files": [
+                {
+                  "type": "file",
+                  "path": "src/shared/utils/shutdown.ts",
+                  "content": "import { Server } from \"http\";\n\n/**\n * Gracefully shuts down the server when a termination signal is received.\n * @param server The HTTP server instance to close.\n */\nexport const configureGracefulShutdown = (server: Server) => {\n  const signals = [\"SIGTERM\", \"SIGINT\"];\n\n  signals.forEach(signal => {\n    process.on(signal, () => {\n      console.log(`\\n${signal} signal received. Shutting down gracefully...`);\n\n      server.close(err => {\n        if (err) {\n          console.error(\"Error during server close:\", err);\n          process.exit(1);\n        }\n\n        console.log(\"HTTP server closed.\");\n        // Add additional cleanup logic here (e.g., closing database connections)\n        process.exit(0);\n      });\n\n      // Force shutdown after 10 seconds if graceful shutdown fails\n      setTimeout(() => {\n        console.error(\n          \"Could not close connections in time, forcefully shutting down\"\n        );\n        process.exit(1);\n      }, 10000);\n    });\n  });\n};\n"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

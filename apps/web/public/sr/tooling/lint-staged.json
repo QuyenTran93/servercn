@@ -1,0 +1,19 @@
+{
+  "$schema": "https://servercn.vercel.app/schema/tooling.registry.json",
+  "slug": "lint-staged",
+  "templates": {
+    "base": {
+      "files": [
+        {
+          "type": "tooling",
+          "path": ".lintstagedrc.json",
+          "content": "{\n  \"*.{js,ts}\": [\"eslint --fix\", \"prettier --write\"]\n}\n"
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "runtime": [],
+    "dev": ["lint-staged"]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://servercn.vercel.app/schema/component.registry.json",
+  "slug": "cron-job",
+  "runtimes": {
+    "node": {
+      "frameworks": {
+        "express": {
+          "dependencies": {
+            "runtime": ["node-cron"],
+            "dev": [""]
+          },
+          "env": [],
+          "architectures": {
+            "mvc": {
+              "files": [
+                {
+                  "type": "file",
+                  "path": "src/jobs/index.ts",
+                  "content": "import { exampleJob } from \"./example.job\";\n\n/**\n * Initialize and start all background jobs\n */\nexport const initJobs = () => {\n  exampleJob.start();\n  console.log(\"Background jobs initialized.\");\n};\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/jobs/example.job.ts",
+                  "content": "import cron from \"node-cron\";\n\n/**\n * Example background job that runs every minute\n * Format: minute hour day-of-month month day-of-week\n */\nexport const exampleJob = cron.schedule(\"* * * * *\", () => {\n  console.log(\"Background job running every minute...\");\n  // Add your task logic here (e.g., database cleanup, sending reports)\n});\n"
+                }
+              ]
+            },
+            "feature": {
+              "files": [
+                {
+                  "type": "file",
+                  "path": "src/shared/jobs/index.ts",
+                  "content": "import { exampleJob } from \"./example.job\";\n\n/**\n * Initialize and start all background jobs\n */\nexport const initJobs = () => {\n  exampleJob.start();\n  console.log(\"Background jobs initialized.\");\n};\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/shared/jobs/example.job.ts",
+                  "content": "import cron from \"node-cron\";\n\n/**\n * Example background job that runs every minute\n */\nexport const exampleJob = cron.schedule(\"* * * * *\", () => {\n  console.log(\"Background job running every minute...\");\n});\n"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

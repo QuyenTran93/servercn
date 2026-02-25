@@ -1,0 +1,19 @@
+{
+  "$schema": "https://servercn.vercel.app/schema/tooling.registry.json",
+  "slug": "commitlint",
+  "templates": {
+    "base": {
+      "files": [
+        {
+          "type": "tooling",
+          "path": "commitlint.config.ts",
+          "content": "module.exports = {\n  extends: [\"@commitlint/config-conventional\"],\n  rules: {\n    \"type-enum\": [\n      2,\n      \"always\",\n      [\n        \"feat\",\n        \"fix\",\n        \"docs\",\n        \"style\",\n        \"refactor\",\n        \"perf\",\n        \"test\",\n        \"build\",\n        \"ci\",\n        \"chore\",\n        \"revert\"\n      ]\n    ],\n    \"subject-case\": [2, \"always\", \"sentence-case\"]\n  }\n};\n"
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "runtime": [],
+    "dev": ["@commitlint/cli", "@commitlint/config-conventional"]
+  }
+}
