@@ -119,7 +119,7 @@
 
     "orm": {
       "type": "object",
-      "required": ["templates", "dependencies"],
+      "required": ["templates", "dependencies", "env"],
       "additionalProperties": false,
       "description": "ORM configuration including architecture templates and dependencies",
       "properties": {
@@ -128,7 +128,8 @@
         },
         "dependencies": {
           "$ref": "#/$defs/dependencySet"
-        }
+        },
+        "env": { "$ref": "#/$defs/env" }
       }
     },
 
@@ -165,6 +166,11 @@
           "items": { "type": "string" }
         }
       }
+    },
+    "env": {
+      "type": "array",
+      "description": "Environment variables required by the foundation",
+      "items": { "type": "string" }
     }
   }
 }
