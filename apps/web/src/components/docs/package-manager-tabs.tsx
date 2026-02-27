@@ -33,7 +33,7 @@ export default async function PackageManagerTabs({
     <Tabs
       defaultValue="npm"
       className={cn(
-        "xsm:max-w[340px] my-6 max-w-90 overflow-auto rounded-md border-0 sm:max-w-200"
+        "xsm:max-w[340px] my-6 max-w-90 rounded-md border-0 sm:max-w-200"
       )}
       style={{ backgroundColor: bg }}>
       <TabsList className={cn("pl-3 pt-3")} style={{ backgroundColor: bg }}>

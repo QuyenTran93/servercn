@@ -26,7 +26,7 @@ export default function FileViewer({ content }: { content?: string }) {
 
   if (!content) {
     return (
-      <div className="text-muted-foreground flex h-full flex-col items-center justify-center space-y-2.5">
+      <div className="text-muted-foreground flex h-130 flex-col items-center justify-center space-y-2.5">
         <p className="text-2xl font-medium">ServerCN</p>
         <p className="text-base font-normal">
           Select a file to view its contents

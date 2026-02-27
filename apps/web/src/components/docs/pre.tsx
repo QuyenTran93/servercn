@@ -27,7 +27,7 @@ export function Pre({
   }
 
   return (
-    <div className="thin-scrollbar relative max-w-[400.5px] overflow-x-auto sm:w-full sm:max-w-200 mb-3">
+    <div className="thin-scrollbar relative mb-3 max-w-[400.5px] overflow-x-auto sm:w-full sm:max-w-200">
       <pre
         ref={ref}
         {...props}
@@ -39,7 +39,7 @@ export function Pre({
           handleCopy={copy}
           copied={copied}
           className={cn(
-            "absolute right-4 bottom-3 z-20 flex items-center justify-center py-2 transition-all"
+            "absolute right-4 bottom-3 z-20 flex items-center justify-center transition-all"
           )}
         />
         {children}
