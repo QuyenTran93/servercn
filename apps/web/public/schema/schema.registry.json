@@ -157,7 +157,7 @@
           "type": "string",
           "description": "Feature-based architecture template path"
         },
-        "module": {
+        "modular": {
           "type": "string",
           "description": "Modular(Nestjs style) architecture template path"
         }

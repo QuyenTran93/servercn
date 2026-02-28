@@ -71,6 +71,14 @@
             "tooling"
           ]
         },
+        "frameworks": {
+          "type": "array",
+          "description": "List of supported frameworks.",
+          "items": {
+            "type": "string",
+            "enum": ["express", "nestjs"]
+          }
+        },
         "status": {
           "type": "string",
           "description": "Indicates the stability level of the entry.",
