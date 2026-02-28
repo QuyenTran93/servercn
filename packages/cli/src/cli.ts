@@ -23,6 +23,7 @@ async function main() {
     .command("init [foundation]")
     .description("Initialize ServerCN in the current project")
     .option("-f, --force", "Overwrite existing files if they exist")
+    .option("--fw <framework>", "Framework type: express or nestjs", "express")
     .action(init);
 
   registryListCommands(program);
