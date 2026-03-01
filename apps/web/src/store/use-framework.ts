@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type Framework = "express" | "nestjs" | null;
+export type Framework = "express" | "nestjs";
 
 interface FrameworkState {
   framework: Framework;
@@ -11,7 +11,7 @@ interface FrameworkState {
 export const useFramework = create<FrameworkState>()(
   persist(
     set => ({
-      framework: "express", // Default framework
+      framework: "express",
       setFramework: (framework: Framework) => {
         set({ framework });
       }

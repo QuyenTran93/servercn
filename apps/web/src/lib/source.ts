@@ -1,4 +1,4 @@
-import { IRegistryItems, ItemType } from "@/@types/registry";
+import { Framework, IRegistryItems, ItemType } from "@/@types/registry";
 import registry from "@/data/registry.json";
 import { GITHUB_URL } from "./constants";
 
@@ -6,6 +6,13 @@ export const RESTRICTED_FOLDER_STRUCTURE_PAGES = [
   "installation",
   "introduction",
   "project-structure"
+];
+
+export const FRAMEWORK_SECTIONS = [
+  "blueprints",
+  "components",
+  "foundations",
+  "schemas"
 ];
 
 export const findNeighbour = (
@@ -81,9 +88,9 @@ export const findNeighbour = (
   };
 };
 
-export function getTypeItems(
+export function getRegistryTypeItems(
   type: ItemType,
-  framework?: string | null
+  framework: Framework = "express"
 ): IRegistryItems[] {
   const items = registry.items
     .sort((a, b) => a.title.localeCompare(b.title))
@@ -101,11 +108,19 @@ export function getTypeItems(
     })
     .map(item => ({
       title: item.title,
-      url: item.docs,
+      description: item.description,
+      url: ["guide", "tooling"].includes(item.type)
+        ? item.docs
+        : item.docs.replace("/docs/", `/docs/${framework}/`),
       status: item.status,
       slug: item.slug,
       frameworks: item.frameworks,
-      meta: item.meta as IRegistryItems["meta"],
+      meta: {
+        databases: item.meta?.databases?.map(db => ({
+          ...db,
+          slug: `${framework}/schemas/${db.slug}`
+        }))
+      },
       type: item.type
     }));
   return items.length > 0 ? (items as IRegistryItems[]) : [];
