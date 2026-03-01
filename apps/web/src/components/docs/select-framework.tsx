@@ -36,7 +36,7 @@ export function SelectFramework() {
   const currentFrameworkFromUrl: FrameworkType =
     segments[1] === "express" || segments[1] === "nestjs"
       ? (segments[1] as Framework)
-      : null;
+      : "express";
 
   // Sync URL framework with store on mount and URL change
   useEffect(() => {
