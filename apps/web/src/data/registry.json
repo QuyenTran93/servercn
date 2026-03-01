@@ -486,10 +486,6 @@
             "slug": "banking-app-mongodb"
           },
           {
-            "label": "PostgreSQL (Drizzle)",
-            "slug": "banking-app-postgresql"
-          },
-          {
             "label": "MySQL (Drizzle)",
             "slug": "banking-app-mysql"
           }

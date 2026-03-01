@@ -1,0 +1,45 @@
+---
+title: Banking App Schema
+description: Production-ready Banking schemas with support for MongoDB, PostgreSQL, and MySQL databases.
+command: npx servercn-cli add sc banking-app
+---
+
+# Banking App Schema
+
+The Banking App Schema is a beginner-friendly schema for a banking application. It includes support for MongoDB, PostgreSQL, and MySQL databases.
+
+## Database Support
+
+- [MongoDB(Mongoose)](/docs/express/schemas/banking-app-mongodb)
+- [PostgreSQL(Drizzle)](/docs/express/schemas/banking-app-postgresql)
+- [MySQL(Drizzle)](/docs/express/schemas/banking-app-mysql)
+
+## Installation all schemas
+
+<PackageManagerTabs command="npx servercn-cli add schema banking-app" />
+
+## Installation individual schema
+
+<Note text="If you install schema individually, the relationships between them won't be automatic—you'll need to implement them manually." />
+
+### 1. User
+
+<PackageManagerTabs command="npx servercn-cli add schema banking-app/user" />
+
+### 2. Account
+
+<PackageManagerTabs command="npx servercn-cli add schema banking-app/account" />
+
+### 3. Transaction
+
+<PackageManagerTabs command="npx servercn-cli add schema banking-app/transaction" />
+
+### 4. Ledger
+
+<PackageManagerTabs command="npx servercn-cli add schema banking-app/ledger" />
+
+## Learn more
+
+- [MongoDB(Mongoose)](/docs/express/schemas/banking-app-mongodb)
+- [PostgreSQL(Drizzle)](/docs/express/schemas/banking-app-postgresql)
+- [MySQL(Drizzle)](/docs/express/schemas/banking-app-mysql)
