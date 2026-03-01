@@ -1,0 +1,62 @@
+import { Schema, model, Types } from "mongoose";
+
+export const TRANSACTION_STATUS = [
+  "pending",
+  "completed",
+  "failed",
+  "reversed"
+] as const;
+export type TransactionStatus = (typeof TRANSACTION_STATUS)[number];
+
+export interface ITransaction {
+  _id: Types.ObjectId;
+
+  fromAccountId: Types.ObjectId;
+  toAccountId: Types.ObjectId;
+
+  amount: number;
+  status: TransactionStatus;
+  idempotencyKey: string;
+
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const TransactionSchema = new Schema<ITransaction>(
+  {
+    fromAccountId: {
+      type: Schema.Types.ObjectId,
+      ref: "Account",
+      required: true,
+      index: true
+    },
+    toAccountId: {
+      type: Schema.Types.ObjectId,
+      ref: "Account",
+      required: true,
+      index: true
+    },
+    amount: {
+      type: Number,
+      required: true
+    },
+    status: {
+      type: String,
+      enum: TRANSACTION_STATUS,
+      default: "pending"
+    },
+    idempotencyKey: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true
+    }
+  },
+  { timestamps: true }
+);
+
+//? indexes
+TransactionSchema.index({ fromAccountId: 1, toAccountId: 1 });
+const Transaction = model<ITransaction>("Transaction", TransactionSchema);
+
+export default Transaction;
