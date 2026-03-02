@@ -28,7 +28,7 @@ npx servercn-cli add [component-name]
 Add multiple components like this:
 
 ```bash
-npx servercn-cli add logger-pino jwt-utils
+npx servercn-cli add logger jwt-utils
 ```
 
 ## Components
@@ -63,40 +63,17 @@ npx servercn-cli add file-upload
 npx servercn-cli add jwt-utils
 ```
 
-- ### Logger Pino
+- ### Logger
 
 ```bash
-npx servercn-cli add logger-pino
+npx servercn-cli add logger
 ```
 
-- ### Logger Winston
-
-```bash
-npx servercn-cli add logger-winston
-```
-
-- ### Rate Limiter
-
-```bash
-npx servercn-cli add rate-limiter
-```
-
-- ### GitHub OAuth
-
-```bash
-npx servercn-cli add github-oauth
-```
-
-- ### Google OAuth
-
-```bash
-npx servercn-cli add google-oauth
-```
 
 - ### GitHub and Google OAuth
 
 ```bash
-npx servercn-cli add github-google-oauth
+npx servercn-cli add oauth
 ```
 
 - ### Health Check

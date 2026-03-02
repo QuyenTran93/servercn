@@ -135,7 +135,7 @@ Manual
 <Step>Install following  dependencies: </Step>
 <PackageManagerTabs command="npm install @nestjs/terminus"/>
 
-<Step>Basic implementation: </Step>
+<Step>Health Check Controller: </Step>
 
 Create a health controller in: <Code children="src/health/health.controller.ts" />
 
@@ -189,7 +189,9 @@ checkDetailed() {
 }
 ```
 
-<Code children="src/health/health.module.ts" />
+<Step>Health Check Module: </Step>
+
+Create a health module in: <Code children="src/health/health.module.ts" />
 
 ```ts
 import { Module } from '@nestjs/common';

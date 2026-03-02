@@ -33,10 +33,10 @@ export function SelectFramework() {
 
   // Detect current framework from URL
   const segments = pathname.split("/").filter(Boolean);
-  const currentFrameworkFromUrl: FrameworkType =
+  const currentFrameworkFromUrl: FrameworkType | null =
     segments[1] === "express" || segments[1] === "nestjs"
-      ? (segments[1] as Framework)
-      : "express";
+      ? (segments[1] as FrameworkType)
+      : null;
 
   // Sync URL framework with store on mount and URL change
   useEffect(() => {
@@ -49,30 +49,30 @@ export function SelectFramework() {
   // Priority: URL framework > Stored framework > "express" (default)
   const displayValue = currentFrameworkFromUrl || framework || "express";
 
-  const handleChange = (value: Framework) => {
+  const handleChange = (value: FrameworkType) => {
     // Update the store
     setFramework(value);
 
-    const segments = pathname.split("/").filter(Boolean);
+    const currentSegments = pathname.split("/").filter(Boolean);
 
-    if (segments[0] !== "docs") return;
+    if (currentSegments[0] !== "docs") return;
 
     // Remove existing framework if present
-    if (segments[1] === "express" || segments[1] === "nestjs") {
-      segments.splice(1, 1);
+    if (currentSegments[1] === "express" || currentSegments[1] === "nestjs") {
+      currentSegments.splice(1, 1);
     }
 
-    const section = segments[1];
+    const section = currentSegments[1];
 
     // Only apply framework to framework-based sections
     if (!FRAMEWORK_SECTIONS.includes(section)) return;
 
     // Insert framework after /docs
     if (value) {
-      segments.splice(1, 0, value);
+      currentSegments.splice(1, 0, value);
     }
 
-    router.push(`/${segments.join("/")}` as Route);
+    router.push(`/${currentSegments.join("/")}` as Route);
   };
 
   return (
