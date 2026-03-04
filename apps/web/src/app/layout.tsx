@@ -5,6 +5,7 @@ import { fontVariables } from "@/lib/fonts";
 import { siteConfig } from "@/lib/config";
 import { ScrollToTopButton } from "@/components/layouts/scroll-to-top";
 import Navbar from "@/components/layouts/navbar";
+import { SERVERCN_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: siteConfig.title,
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
     siteName: siteConfig.applicationName,
     images: [
       {
-        url: "/og-image.png",
+        url: `${SERVERCN_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: siteConfig.applicationName
