@@ -17,31 +17,33 @@ export const AI_QUERIES = [
     {
         label: "ChatGPT",
         name: "chatgpt",
-        url: (prompt: string) => `https://chatgpt.com/?prompt=${encodeURIComponent(prompt)}`,
+        url: (prompt: string) => `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`,
         isAvailable: true,
     },
     {
         label: "Claude",
         name: "claude",
-        url: (prompt: string) => `https://claude.ai/?prompt=${encodeURIComponent(prompt)}`,
+        url: (prompt: string) => `https://claude.ai/?q=${encodeURIComponent(prompt)}`,
         isAvailable: true,
     },
     {
         label: "Google AI Studio",
         name: "google-ai-studio",
-        url: (prompt: string) => `https://aistudio.google.com/?prompt=${encodeURIComponent(prompt)}`,
+        url: (prompt: string) =>
+            `https://aistudio.google.com/prompts/new_chat?prompt=${encodeURIComponent(prompt)}`,
         isAvailable: true,
     },
     {
         label: "Perplexity",
         name: "perplexity",
-        url: (prompt: string) => `https://perplexity.ai/?prompt=${encodeURIComponent(prompt)}`,
+        url: (prompt: string) =>
+            `https://www.perplexity.ai/search/new?q=${encodeURIComponent(prompt)}`,
         isAvailable: true,
     },
     {
         label: "Grok",
         name: "grok",
-        url: (prompt: string) => `https://grok.com/?prompt=${encodeURIComponent(prompt)}`,
+        url: (prompt: string) => `https://grok.com/?q=${encodeURIComponent(prompt)}`,
         isAvailable: true,
     },
     {
