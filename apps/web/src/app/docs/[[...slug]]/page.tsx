@@ -279,7 +279,6 @@ export default async function DocsPage({
           </div>
         </div>
         <aside className="no-scrollbar docs-content sticky top-20 hidden max-h-[calc(100vh-2rem)] min-w-64 shrink-0 space-y-4 overflow-y-auto xl:block">
-          {/* <OpenInAi /> */}
           <OnThisPage />
         </aside>
       </div>
