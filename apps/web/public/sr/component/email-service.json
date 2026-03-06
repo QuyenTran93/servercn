@@ -9,8 +9,13 @@
             "nodemailer": {
               "label": "Nodemailer (SMTP)",
               "dependencies": {
-                "runtime": ["nodemailer", "dotenv-flow"],
-                "dev": ["@types/nodemailer"]
+                "runtime": [
+                  "nodemailer",
+                  "dotenv-flow"
+                ],
+                "dev": [
+                  "@types/nodemailer"
+                ]
               },
               "env": [
                 "SMTP_HOST",
@@ -63,9 +68,15 @@
             "resend": {
               "label": "Resend",
               "dependencies": {
-                "runtime": ["resend", "dotenv-flow"]
+                "runtime": [
+                  "resend",
+                  "dotenv-flow"
+                ]
               },
-              "env": ["RESEND_API_KEY", "EMAIL_FROM"],
+              "env": [
+                "RESEND_API_KEY",
+                "EMAIL_FROM"
+              ],
               "architectures": {
                 "mvc": {
                   "files": [

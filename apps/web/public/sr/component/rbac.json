@@ -5,7 +5,9 @@
       "frameworks": {
         "express": {
           "dependencies": {
-            "runtime": ["dotenv-flow"],
+            "runtime": [
+              "dotenv-flow"
+            ],
             "dev": []
           },
           "env": [],
@@ -49,11 +51,6 @@
                 },
                 {
                   "type": "file",
-                  "path": "src/routes/user.routes.ts",
-                  "content": "import { Response, Router } from \"express\";\nimport { verifyAuthentication } from \"../middlewares/verify-auth\";\nimport { UserRequest } from \"../types/user\";\nimport { ApiResponse } from \"../utils/api-response\";\nimport { authorizeRoles } from \"../middlewares/authorize-role\";\n\nconst router = Router();\n\nrouter.get(\n  \"/profile\",\n  verifyAuthentication,\n  authorizeRoles(\"user\", \"admin\"),\n  (req: UserRequest, res: Response) => {\n    return ApiResponse.ok(res, \"User profile\", req.user);\n  }\n);\n\nexport default router;\n"
-                },
-                {
-                  "type": "file",
                   "path": "src/models/user.model.ts",
                   "content": "import mongoose, { Document, Model, Schema } from \"mongoose\";\nimport { USER_ROLES, userRoles } from \"../types/user\";\n\nexport interface IUser extends Document {\n  _id: mongoose.Types.ObjectId;\n  name: string;\n  email: string;\n  password: string;\n  role: userRoles;\n  isEmailVerified: boolean;\n\n  createdAt: Date;\n  updatedAt: Date;\n}\n\nconst userSchema = new Schema<IUser>(\n  {\n    name: {\n      type: String,\n      required: [true, \"Name is required\"],\n      trim: true\n    },\n    email: {\n      type: String,\n      required: [true, \"Email is required\"],\n      unique: true,\n      lowercase: true,\n      trim: true\n    },\n    password: {\n      type: String,\n      select: false,\n      default: null\n    },\n    role: {\n      type: String,\n      enum: USER_ROLES,\n      default: \"user\"\n    },\n    isEmailVerified: {\n      type: Boolean,\n      default: false\n    }\n  },\n  {\n    timestamps: true\n  }\n);\n\nconst User: Model<IUser> = mongoose.model<IUser>(\"User\", userSchema);\nexport default User;\n"
                 },
@@ -71,6 +68,11 @@
                   "type": "file",
                   "path": "src/middlewares/authorize-role.ts",
                   "content": "import { NextFunction, Request, Response } from \"express\";\nimport { ApiError } from \"../utils/api-error\";\nimport { UserRequest, userRoles } from \"../types/user\";\n\nexport const authorizeRoles = (...allowedRoles: userRoles[]) => {\n  return (req: UserRequest, res: Response, next: NextFunction) => {\n    // 1. Check if user is authenticated\n    if (!req.user) {\n      return next(ApiError.unauthorized(\"Unauthorized, Please login first.\"));\n    }\n\n    // 2. Check if user has required role\n    // Note: Ensure 'role' exists on req.user. You might strictly type this.\n    if (\n      !req.user.role ||\n      !allowedRoles.includes(req?.user?.role as userRoles)\n    ) {\n      return next(\n        ApiError.forbidden(\n          \"Forbidden. You do not have permission to access this resource\"\n        )\n      );\n    }\n    next();\n  };\n};\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/routes/user.routes.ts",
+                  "content": "import { Response, Router } from \"express\";\nimport { verifyAuthentication } from \"../middlewares/verify-auth\";\nimport { UserRequest } from \"../types/user\";\nimport { ApiResponse } from \"../utils/api-response\";\nimport { authorizeRoles } from \"../middlewares/authorize-role\";\n\nconst router = Router();\n\nrouter.get(\n  \"/profile\",\n  verifyAuthentication,\n  authorizeRoles(\"user\", \"admin\"),\n  (req: UserRequest, res: Response) => {\n    return ApiResponse.ok(res, \"User profile\", req.user);\n  }\n);\n\nexport default router;\n"
                 },
                 {
                   "type": "file",
@@ -108,21 +110,6 @@
                 },
                 {
                   "type": "file",
-                  "path": "src/shared/utils/logger.ts",
-                  "content": "import pino from \"pino\";\nimport env from \"../configs/env\";\n\nexport const logger = pino({\n  level: env.LOG_LEVEL,\n  transport:\n    env.NODE_ENV !== \"production\"\n      ? {\n          target: \"pino-pretty\",\n          options: {\n            colorize: true,\n            translateTime: \"yyyy-mm-dd HH:MM:ss\",\n            ignore: \"pid,hostname\"\n          }\n        }\n      : undefined\n});\n"
-                },
-                {
-                  "type": "file",
-                  "path": "src/shared/utils/jwt.ts",
-                  "content": "import jwt from \"jsonwebtoken\";\nimport env from \"../configs/env\";\nimport { userRoles } from \"../../types/user\";\n\nconst ACCESS_TOKEN_EXPIRY = \"15m\";\nconst REFRESH_TOKEN_EXPIRY = \"7d\";\n\ntype userType = {\n  _id: string;\n  role: userRoles;\n  email: string;\n};\n\n// Generate a short-lived access token\nexport function generateAccessToken(user: userType) {\n  return jwt.sign(\n    {\n      _id: user._id,\n      role: user.role,\n      email: user.email\n    },\n    env.JWT_ACCESS_SECRET!,\n    {\n      expiresIn: ACCESS_TOKEN_EXPIRY\n    }\n  );\n}\n\n// Generate a long-lived refresh token\nexport function generateRefreshToken(userId: string) {\n  return jwt.sign({ userId }, env.JWT_REFRESH_SECRET!, {\n    expiresIn: REFRESH_TOKEN_EXPIRY\n  });\n}\n\n// Verify and decode an access token\nexport function verifyAccessToken(token: string) {\n  return jwt.verify(token, env.JWT_ACCESS_SECRET!) as userType;\n}\n\n// Verify and decode a refresh token\nexport function verifyRefreshToken(token: string) {\n  return jwt.verify(token, env.JWT_REFRESH_SECRET!) as {\n    userId: string;\n  };\n}\n"
-                },
-                {
-                  "type": "file",
-                  "path": "src/shared/utils/api-response.ts",
-                  "content": "import { STATUS_CODES, StatusCode } from \"../constants/status-codes\";\nimport type { Response } from \"express\";\n\ntype ApiResponseParams<T> = {\n  success: boolean;\n  message: string;\n  statusCode: StatusCode;\n  data?: T | null;\n  errors?: unknown;\n};\n\nexport class ApiResponse<T = unknown> {\n  public readonly success: boolean;\n  public readonly message: string;\n  public readonly statusCode: StatusCode;\n  public readonly data?: T | null;\n  public readonly errors?: unknown;\n\n  constructor({\n    success,\n    message,\n    statusCode,\n    data = null,\n    errors\n  }: ApiResponseParams<T>) {\n    this.success = success;\n    this.message = message;\n    this.statusCode = statusCode;\n    this.data = data;\n    this.errors = errors;\n  }\n\n  send(res: Response): Response {\n    return res.status(this.statusCode).json({\n      success: this.success,\n      message: this.message,\n      statusCode: this.statusCode,\n      ...(this.data !== undefined && { data: this.data }),\n      ...(this.errors !== undefined && { errors: this.errors })\n    });\n  }\n\n  static Success<T>(\n    res: Response,\n    message: string,\n    data?: T,\n    statusCode: StatusCode = STATUS_CODES.OK\n  ): Response {\n    return new ApiResponse<T>({\n      success: true,\n      message,\n      data,\n      statusCode\n    }).send(res);\n  }\n\n  static ok<T>(res: Response, message = \"OK\", data?: T) {\n    return ApiResponse.Success(res, message, data, STATUS_CODES.OK);\n  }\n\n  static created<T>(res: Response, message = \"Created\", data?: T) {\n    return ApiResponse.Success(res, message, data, STATUS_CODES.CREATED);\n  }\n}\n"
-                },
-                {
-                  "type": "file",
                   "path": "src/shared/middlewares/verify-auth.ts",
                   "content": "import {\n  generateAccessToken,\n  generateRefreshToken,\n  verifyAccessToken,\n  verifyRefreshToken\n} from \"../utils/jwt\";\nimport { logger } from \"../utils/logger\";\nimport env from \"../configs/env\";\nimport { UserRequest } from \"../../types/user\";\nimport { ApiError } from \"../errors/api-error\";\nimport User from \"../../modules/user/user.model\";\nimport { NextFunction, Response } from \"express\";\n\nconst isProduction = env.NODE_ENV === \"production\";\nconst ACCESS_TOKEN_EXPIRY = 15 * 60 * 1000;\nconst REFRESH_TOKEN_EXPIRY = 7 * 24 * 60 * 60 * 1000;\n\nexport const COOKIE_OPTIONS = {\n  httpOnly: true,\n  secure: isProduction,\n  sameSite: isProduction ? (\"none\" as const) : (\"lax\" as const),\n  path: \"/\"\n};\n\nexport async function verifyAuthentication(\n  req: UserRequest,\n  res: Response,\n  next: NextFunction\n): Promise<void> {\n  const accessToken = req.cookies?.accessToken;\n  const refreshToken = req.cookies?.refreshToken;\n\n  // Step 1: Try validating access token\n\n  try {\n    if (accessToken) {\n      const decoded = verifyAccessToken(accessToken);\n      req.user = decoded;\n      return next();\n    }\n  } catch (err) {\n    // Access token expired or invalid\n    logger.warn(\"Access token verification failed\");\n  }\n\n  // Step 2: Refresh token required if access token fails\n\n  if (!refreshToken) {\n    return next(ApiError.unauthorized(\"Unauthorized, Please login first.\"));\n  }\n\n  try {\n    const decodedRefresh = verifyRefreshToken(refreshToken);\n\n    // Step 3: Ensure user still exists\n\n    const userInDb = await User.findOne({\n      _id: decodedRefresh.userId\n    });\n\n    if (!userInDb) {\n      return next(ApiError.unauthorized(\"Unauthorized, Please login first.\"));\n    }\n\n    // Step 4: Issue new tokens\n\n    const userPayload = {\n      _id: userInDb._id.toString(),\n      role: userInDb.role,\n      email: userInDb.email\n    };\n    const newAccessToken = generateAccessToken(userPayload);\n\n    const newRefreshToken = generateRefreshToken(userInDb._id.toString());\n\n    // Step 5: Saved accessToken and refreshToken in cookie\n    res.cookie(\"accessToken\", newAccessToken, {\n      ...COOKIE_OPTIONS,\n      maxAge: ACCESS_TOKEN_EXPIRY\n    });\n\n    res.cookie(\"refreshToken\", newRefreshToken, {\n      ...COOKIE_OPTIONS,\n      maxAge: REFRESH_TOKEN_EXPIRY\n    });\n\n    // Step 6: Attach user to request\n\n    req.user = {\n      _id: userInDb._id,\n      role: userInDb.role,\n      email: userInDb.email\n    };\n\n    // you can update the refresh token in the database here if you store it in the database\n\n    return next();\n  } catch (err: any) {\n    logger.warn(\"Refresh token verification failed\");\n    return next(ApiError.unauthorized(\"Unauthorized, Please login first.\"));\n  }\n}\n"
                 },
@@ -135,6 +122,21 @@
                   "type": "file",
                   "path": "src/shared/middlewares/authorize-role.ts",
                   "content": "import { NextFunction, Request, Response } from \"express\";\nimport { ApiError } from \"../errors/api-error\";\nimport { UserRequest, userRoles } from \"../../types/user\";\nexport const authorizeRoles = (...allowedRoles: userRoles[]) => {\n  return (req: UserRequest, res: Response, next: NextFunction) => {\n    // 1. Check if user is authenticated\n    if (!req.user) {\n      return next(ApiError.unauthorized(\"Unauthorized, Please login first.\"));\n    }\n\n    // 2. Check if user has required role\n    // Note: Ensure 'role' exists on req.user. You might strictly type this.\n    if (\n      !req.user.role ||\n      !allowedRoles.includes(req?.user?.role as userRoles)\n    ) {\n      return next(\n        ApiError.forbidden(\n          \"Forbidden. You do not have permission to access this resource\"\n        )\n      );\n    }\n    next();\n  };\n};\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/shared/utils/logger.ts",
+                  "content": "import pino from \"pino\";\nimport env from \"../configs/env\";\n\nexport const logger = pino({\n  level: env.LOG_LEVEL,\n  transport:\n    env.NODE_ENV !== \"production\"\n      ? {\n          target: \"pino-pretty\",\n          options: {\n            colorize: true,\n            translateTime: \"yyyy-mm-dd HH:MM:ss\",\n            ignore: \"pid,hostname\"\n          }\n        }\n      : undefined\n});\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/shared/utils/jwt.ts",
+                  "content": "import jwt from \"jsonwebtoken\";\nimport env from \"../configs/env\";\nimport { userRoles } from \"../../types/user\";\n\nconst ACCESS_TOKEN_EXPIRY = \"15m\";\nconst REFRESH_TOKEN_EXPIRY = \"7d\";\n\ntype userType = {\n  _id: string;\n  role: userRoles;\n  email: string;\n};\n\n// Generate a short-lived access token\nexport function generateAccessToken(user: userType) {\n  return jwt.sign(\n    {\n      _id: user._id,\n      role: user.role,\n      email: user.email\n    },\n    env.JWT_ACCESS_SECRET!,\n    {\n      expiresIn: ACCESS_TOKEN_EXPIRY\n    }\n  );\n}\n\n// Generate a long-lived refresh token\nexport function generateRefreshToken(userId: string) {\n  return jwt.sign({ userId }, env.JWT_REFRESH_SECRET!, {\n    expiresIn: REFRESH_TOKEN_EXPIRY\n  });\n}\n\n// Verify and decode an access token\nexport function verifyAccessToken(token: string) {\n  return jwt.verify(token, env.JWT_ACCESS_SECRET!) as userType;\n}\n\n// Verify and decode a refresh token\nexport function verifyRefreshToken(token: string) {\n  return jwt.verify(token, env.JWT_REFRESH_SECRET!) as {\n    userId: string;\n  };\n}\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/shared/utils/api-response.ts",
+                  "content": "import { STATUS_CODES, StatusCode } from \"../constants/status-codes\";\nimport type { Response } from \"express\";\n\ntype ApiResponseParams<T> = {\n  success: boolean;\n  message: string;\n  statusCode: StatusCode;\n  data?: T | null;\n  errors?: unknown;\n};\n\nexport class ApiResponse<T = unknown> {\n  public readonly success: boolean;\n  public readonly message: string;\n  public readonly statusCode: StatusCode;\n  public readonly data?: T | null;\n  public readonly errors?: unknown;\n\n  constructor({\n    success,\n    message,\n    statusCode,\n    data = null,\n    errors\n  }: ApiResponseParams<T>) {\n    this.success = success;\n    this.message = message;\n    this.statusCode = statusCode;\n    this.data = data;\n    this.errors = errors;\n  }\n\n  send(res: Response): Response {\n    return res.status(this.statusCode).json({\n      success: this.success,\n      message: this.message,\n      statusCode: this.statusCode,\n      ...(this.data !== undefined && { data: this.data }),\n      ...(this.errors !== undefined && { errors: this.errors })\n    });\n  }\n\n  static Success<T>(\n    res: Response,\n    message: string,\n    data?: T,\n    statusCode: StatusCode = STATUS_CODES.OK\n  ): Response {\n    return new ApiResponse<T>({\n      success: true,\n      message,\n      data,\n      statusCode\n    }).send(res);\n  }\n\n  static ok<T>(res: Response, message = \"OK\", data?: T) {\n    return ApiResponse.Success(res, message, data, STATUS_CODES.OK);\n  }\n\n  static created<T>(res: Response, message = \"Created\", data?: T) {\n    return ApiResponse.Success(res, message, data, STATUS_CODES.CREATED);\n  }\n}\n"
                 },
                 {
                   "type": "file",

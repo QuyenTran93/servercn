@@ -7,3 +7,4 @@ dist
 **/*.mdx
 **/*.md
 coverage
+apps/web/public/sr/
