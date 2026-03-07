@@ -8,4 +8,4 @@ export const prettierConfig = {
   endOfLine: "lf",
 };
 
-export const prettierIgnore = `build\ndist\n.env\nnode_modules`;
+export const prettierIgnore = `build\ndist\n.env\nnode_modules\ncoverage`;
