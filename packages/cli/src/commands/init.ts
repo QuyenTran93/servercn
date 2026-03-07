@@ -110,7 +110,7 @@ export async function init(foundation?: string, options: AddOptions = {}) {
         component.runtimes["node"].frameworks[getFramework(options.fw ?? "express")];
 
       if (options.local) {
-        const targetDir = paths.targets(".");
+        const targetDir = paths.targets(response.root ?? ".");
         const localTemplatePath =
           `node/${getFramework(options.fw ?? "express")}/foundation/${baseConfig?.templates[response.architecture as Architecture]}` ||
           "";
