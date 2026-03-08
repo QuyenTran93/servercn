@@ -84,19 +84,22 @@
 
     "mongodbDatabase": {
       "type": "object",
-      "description": "MongoDB database configuration (Mongoose only)",
+      "description": "MongoDB database configuration (Mongoose or Prisma)",
       "required": ["orms"],
       "additionalProperties": false,
       "properties": {
         "orms": {
           "type": "object",
-          "required": ["mongoose"],
           "additionalProperties": false,
           "properties": {
             "mongoose": {
               "$ref": "#/$defs/orm"
+            },
+            "prisma": {
+              "$ref": "#/$defs/orm"
             }
-          }
+          },
+          "anyOf": [{ "required": ["mongoose"] }, { "required": ["prisma"] }]
         }
       }
     },
@@ -109,13 +112,16 @@
       "properties": {
         "orms": {
           "type": "object",
-          "required": ["drizzle"],
           "additionalProperties": false,
           "properties": {
             "drizzle": {
               "$ref": "#/$defs/orm"
+            },
+            "prisma": {
+              "$ref": "#/$defs/orm"
             }
-          }
+          },
+          "anyOf": [{ "required": ["drizzle"] }, { "required": ["prisma"] }]
         }
       }
     },
