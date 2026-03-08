@@ -26,6 +26,7 @@ import { execa } from "execa";
 import { updateEnvKeys } from "@/utils/update-env";
 
 export async function add(registryItemName: string, options: AddOptions = {}) {
+  await assertInitialized();
   validateInput(registryItemName);
 
   const config = await getServerCNConfig();
@@ -34,7 +35,6 @@ export async function add(registryItemName: string, options: AddOptions = {}) {
   const type: RegistryType = options.type ?? "component";
   const component = await getRegistry(registryItemName, type, options.local);
 
-  await assertInitialized();
 
   validateCompatibility(component, config);
 

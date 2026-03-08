@@ -5,13 +5,13 @@ export const servercnConfig = (
   config: Omit<IServerCNConfig, "$schema" | "version" | "meta">,
 ): IServerCNConfig => {
   return {
-    $schema: `${SERVERCN_URL}/schema/servercn.config.registry.json`,
+    $schema: `${SERVERCN_URL}/schema/servercn.config.json`,
     version: LATEST_VERSION,
 
     project: {
-      root: config.project.root,
+      rootDir: config.project.rootDir,
       type: config.project.type,
-      packageManager: config.project.packageManager
+      packageManager: config.project.packageManager,
     },
 
     stack: config.stack,
