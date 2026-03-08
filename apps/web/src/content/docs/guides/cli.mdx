@@ -21,11 +21,23 @@ The <Code>init</Code> command bootstraps ServerCN configuration in an existing p
 
 <PackageManagerTabs command="npx servercn-cli init" />
 
-You will be prompted to configure your stack:
+
+After running the command, you will be prompted to choose a project foundation:
 
 ```
-> npx servercn-cli init
+  Select a project foundation:  » - Use arrow-keys. Return to submit.
+> Express Starter - Minimal Express server setup
+  Express + Mongoose
+  Express + MySQL (Drizzle)
+  Express + PostgreSQL (Drizzle)
+  Existing Project
+```
 
+Choose the foundation that best fits your project requirements and press Enter to continue.
+
+Again, you will be prompted to configure your stack:
+
+```
 √ Project root directory ... .
 √ Programming language » Typescript (recommended)
 √ Backend framework » Express.js
