@@ -5,7 +5,7 @@
     {
       "name": "registry:servercn.config",
       "description": "Configuration schema for a ServerCN project",
-      "url": "https://servercn.vercel.app/schema/servercn.config.registry.json"
+      "url": "https://servercn.vercel.app/schema/servercn.config.json"
     },
     {
       "name": "registry:component",
