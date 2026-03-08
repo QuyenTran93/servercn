@@ -23,7 +23,6 @@ type listOverviewType = {
   }[];
 };
 
-
 export async function listOverview(options: listOptionType) {
   const components = await loadRegistryItems("component", options.local);
   const blueprints = await loadRegistryItems("blueprint", options.local);
@@ -184,7 +183,8 @@ export async function listFoundations(options: listOptionType) {
       .map(c => ({
         name: c.slug,
         command: `npx servercn-cli init ${c.slug}`,
-        ...(c?.frameworks && c.frameworks.length > 0 && { frameworks: c.frameworks })
+        ...(c?.frameworks &&
+          c.frameworks.length > 0 && { frameworks: c.frameworks })
       }))
   } satisfies listRegistryDataType;
 
@@ -207,7 +207,12 @@ export async function listFoundations(options: listOptionType) {
   logger.break();
   logger.log(highlighter.create("Available Foundation"));
   foundations.map((c, i) => {
-    table.push([i + 1, c.slug, `npx servercn-cli init ${c.slug}`, (c?.frameworks && c.frameworks.join(", ")) || ""]);
+    table.push([
+      i + 1,
+      c.slug,
+      `npx servercn-cli init ${c.slug}`,
+      (c?.frameworks && c.frameworks.join(", ")) || ""
+    ]);
   });
   logger.log(table.toString());
   logger.info(`Learn more: ${SERVERCN_URL}/foundations`);
@@ -266,7 +271,8 @@ export async function listSchemas(options: listOptionType) {
       .map(c => ({
         name: c.slug,
         command: `npx servercn-cli add sc ${c.slug}`,
-        ...(c?.frameworks && c.frameworks.length > 0 && { frameworks: c.frameworks })
+        ...(c?.frameworks &&
+          c.frameworks.length > 0 && { frameworks: c.frameworks })
       }))
   } satisfies listRegistryDataType;
 
@@ -289,7 +295,12 @@ export async function listSchemas(options: listOptionType) {
   logger.break();
   logger.log(highlighter.create("Available Schemas"));
   schemas.map((c, i) => {
-    table.push([i + 1, c.slug, `npx servercn-cli add sc ${c.slug}`, (c?.frameworks && c.frameworks.join(", ")) || ""]);
+    table.push([
+      i + 1,
+      c.slug,
+      `npx servercn-cli add sc ${c.slug}`,
+      (c?.frameworks && c.frameworks.join(", ")) || ""
+    ]);
   });
   logger.log(table.toString());
 
@@ -299,7 +310,6 @@ export async function listSchemas(options: listOptionType) {
 
 export async function listBlueprints(options: listOptionType) {
   const blueprints = await loadRegistryItems("blueprint", options.local);
-
   const data = {
     type: "blueprint",
     alias: "bp",
@@ -308,7 +318,8 @@ export async function listBlueprints(options: listOptionType) {
     items: blueprints.map(c => ({
       name: c.slug,
       command: `npx servercn-cli add bp ${c.slug}`,
-      ...(c?.frameworks && c.frameworks.length > 0 && { frameworks: c.frameworks })
+      ...(c?.frameworks &&
+        c.frameworks.length > 0 && { frameworks: c.frameworks })
     }))
   } satisfies listRegistryDataType;
 
@@ -331,8 +342,14 @@ export async function listBlueprints(options: listOptionType) {
   logger.break();
   logger.log(highlighter.create("Available Blueprints"));
   blueprints.map((c, i) => {
-    table.push([i + 1, c.slug, `npx servercn-cli add bp ${c.slug}`, (c?.frameworks && c.frameworks.join(", ")) || ""]);
+    table.push([
+      i + 1,
+      c.slug,
+      `npx servercn-cli add bp ${c.slug}`,
+      (c?.frameworks && c.frameworks.join(", ")) || ""
+    ]);
   });
+  logger.log(table.toString());
   logger.info(`Learn more: ${SERVERCN_URL}/blueprints`);
   logger.break();
 }

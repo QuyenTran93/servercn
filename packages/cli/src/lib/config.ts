@@ -9,7 +9,7 @@ export async function getServerCNConfig(): Promise<IServerCNConfig> {
   const configPath = path.resolve(cwd, SERVERCN_CONFIG_FILE);
 
   if (!(await fs.pathExists(configPath))) {
-    logger.warn("ServerCN is not initialized. Run `npx servercn-cli init` first.");
+    logger.warn("\nServerCN is not initialized. Run `npx servercn-cli init` first.\n");
     process.exit(1);
   }
 
