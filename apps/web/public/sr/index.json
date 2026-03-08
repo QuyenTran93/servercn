@@ -214,7 +214,7 @@
     },
     {
       "type": "foundation",
-      "slug": "express-server",
+      "slug": "express-starter",
       "frameworks": [
         "express"
       ]

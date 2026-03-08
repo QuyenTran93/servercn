@@ -1,13 +1,13 @@
 {
   "$schema": "https://servercn.vercel.app/schema/foundation.registry.json",
-  "slug": "express-server",
+  "slug": "express-starter",
   "runtimes": {
     "node": {
       "frameworks": {
         "express": {
           "templates": {
-            "mvc": "express-server/mvc",
-            "feature": "express-server/feature"
+            "mvc": "express-starter/mvc",
+            "feature": "express-starter/feature"
           },
           "dependencies": {
             "runtime": [
