@@ -54,7 +54,7 @@ export interface IServerCNConfig {
   $schema: string;
   version: string;
   project: {
-    root: string;
+    rootDir: string;
     type: "backend" | "fullstack";
     packageManager: PackageManager;
   };
