@@ -65,7 +65,12 @@
                 {
                   "type": "file",
                   "path": "prisma/schema.prisma",
-                  "content": "generator client {\r\n  provider = \"prisma-client-js\"\r\n}\r\n\r\ndatasource db {\r\n  provider = \"mongodb\"\r\n  url      = env(\"DATABASE_URL\")\r\n}"
+                  "content": "generator client {\r\n  provider = \"prisma-client-js\"\r\n}\r\n\r\ndatasource db {\r\n  provider = \"mongodb\"\r\n  url      = env(\"DATABASE_URL\")\r\n}\r\n\r\nmodel User { \r\n  id    String  @id @default(auto()) @map(\"_id\") @db.ObjectId\r\n  email String  @unique\r\n  name  String?\r\n  password String\r\n} \r\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/routes/health.routes.ts",
+                  "content": "import { Router } from \"express\";\r\nimport {\r\n  healthCheck,\r\n  detailedHealthCheck\r\n} from \"../controllers/health.controller\";\r\n\r\nconst router = Router();\r\n\r\nrouter.get(\"/\", healthCheck);\r\nrouter.get(\"/detailed\", detailedHealthCheck);\r\n\r\nexport default router;\r\n"
                 },
                 {
                   "type": "file",
@@ -94,8 +99,13 @@
                 },
                 {
                   "type": "file",
-                  "path": "src/routes/health.routes.ts",
-                  "content": "import { Router } from \"express\";\r\nimport {\r\n  healthCheck,\r\n  detailedHealthCheck\r\n} from \"../controllers/health.controller\";\r\n\r\nconst router = Router();\r\n\r\nrouter.get(\"/\", healthCheck);\r\nrouter.get(\"/detailed\", detailedHealthCheck);\r\n\r\nexport default router;\r\n"
+                  "path": "src/constants/status-codes.ts",
+                  "content": "export const STATUS_CODES = {\r\n  // 2xx Success\r\n  OK: 200,\r\n  CREATED: 201,\r\n  ACCEPTED: 202,\r\n  NO_CONTENT: 204,\r\n\r\n  // 3xx Redirection\r\n  MOVED_PERMANENTLY: 301,\r\n  FOUND: 302,\r\n  NOT_MODIFIED: 304,\r\n\r\n  // 4xx Client Errors\r\n  BAD_REQUEST: 400,\r\n  UNAUTHORIZED: 401,\r\n  FORBIDDEN: 403,\r\n  NOT_FOUND: 404,\r\n  CONFLICT: 409,\r\n  UNPROCESSABLE_ENTITY: 422,\r\n  TOO_MANY_REQUESTS: 429,\r\n\r\n  // 5xx Server Errors\r\n  INTERNAL_SERVER_ERROR: 500,\r\n  NOT_IMPLEMENTED: 501,\r\n  BAD_GATEWAY: 502,\r\n  SERVICE_UNAVAILABLE: 503,\r\n  GATEWAY_TIMEOUT: 504\r\n} as const;\r\n\r\nexport type StatusCode = (typeof STATUS_CODES)[keyof typeof STATUS_CODES];\r\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/controllers/health.controller.ts",
+                  "content": "import { Request, Response } from \"express\";\r\nimport { ApiResponse } from \"../utils/api-response\";\r\nimport { AsyncHandler } from \"../utils/async-handler\";\r\n\r\n/**\r\n * Basic health check endpoint\r\n * GET /api/health\r\n */\r\nexport const healthCheck = AsyncHandler(\r\n  async (_req: Request, res: Response) => {\r\n    return ApiResponse.Success(res, \"Service is healthy\", {\r\n      status: \"healthy\",\r\n      timestamp: new Date().toISOString(),\r\n      uptime: process.uptime()\r\n    });\r\n  }\r\n);\r\n\r\n/**\r\n * Detailed health check with system information\r\n * GET /api/health/detailed\r\n */\r\nexport const detailedHealthCheck = AsyncHandler(\r\n  async (_req: Request, res: Response) => {\r\n    const healthData = {\r\n      status: \"healthy\",\r\n      timestamp: new Date().toISOString(),\r\n      uptime: process.uptime(),\r\n      environment: process.env.NODE_ENV || \"development\",\r\n      version: process.env.npm_package_version || \"1.0.0\",\r\n      memory: {\r\n        used:\r\n          Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) /\r\n          100,\r\n        total:\r\n          Math.round((process.memoryUsage().heapTotal / 1024 / 1024) * 100) /\r\n          100,\r\n        unit: \"MB\"\r\n      },\r\n      cpu: {\r\n        usage: process.cpuUsage()\r\n      }\r\n    };\r\n\r\n    return ApiResponse.Success(res, \"Service is healthy\", healthData);\r\n  }\r\n);\r\n"
                 },
                 {
                   "type": "file",
@@ -106,16 +116,6 @@
                   "type": "file",
                   "path": "src/middlewares/error-handler.ts",
                   "content": "import { Request, Response, NextFunction } from \"express\";\r\nimport env from \"../configs/env\";\r\n\r\nimport { ApiError } from \"../utils/api-error\";\r\nimport { logger } from \"../utils/logger\";\r\n\r\nexport const errorHandler = (\r\n  err: Error,\r\n  req: Request,\r\n  res: Response,\r\n  next: NextFunction\r\n) => {\r\n  let statusCode = 500;\r\n  let message = \"Internal server error\";\r\n\r\n  if (err instanceof ApiError) {\r\n    statusCode = err.statusCode;\r\n    message = err.message;\r\n  }\r\n\r\n  logger.error(\r\n    err,\r\n    `Error: ${message} | Status: ${statusCode} | Path: ${req.method} ${req.originalUrl}`\r\n  );\r\n\r\n  const response = {\r\n    success: false,\r\n    message,\r\n    ...(env.NODE_ENV === \"development\" && { stack: err.stack })\r\n  };\r\n\r\n  res.status(statusCode).json(response);\r\n};\r\n"
-                },
-                {
-                  "type": "file",
-                  "path": "src/controllers/health.controller.ts",
-                  "content": "import { Request, Response } from \"express\";\r\nimport { ApiResponse } from \"../utils/api-response\";\r\nimport { AsyncHandler } from \"../utils/async-handler\";\r\n\r\n/**\r\n * Basic health check endpoint\r\n * GET /api/health\r\n */\r\nexport const healthCheck = AsyncHandler(\r\n  async (_req: Request, res: Response) => {\r\n    return ApiResponse.Success(res, \"Service is healthy\", {\r\n      status: \"healthy\",\r\n      timestamp: new Date().toISOString(),\r\n      uptime: process.uptime()\r\n    });\r\n  }\r\n);\r\n\r\n/**\r\n * Detailed health check with system information\r\n * GET /api/health/detailed\r\n */\r\nexport const detailedHealthCheck = AsyncHandler(\r\n  async (_req: Request, res: Response) => {\r\n    const healthData = {\r\n      status: \"healthy\",\r\n      timestamp: new Date().toISOString(),\r\n      uptime: process.uptime(),\r\n      environment: process.env.NODE_ENV || \"development\",\r\n      version: process.env.npm_package_version || \"1.0.0\",\r\n      memory: {\r\n        used:\r\n          Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) /\r\n          100,\r\n        total:\r\n          Math.round((process.memoryUsage().heapTotal / 1024 / 1024) * 100) /\r\n          100,\r\n        unit: \"MB\"\r\n      },\r\n      cpu: {\r\n        usage: process.cpuUsage()\r\n      }\r\n    };\r\n\r\n    return ApiResponse.Success(res, \"Service is healthy\", healthData);\r\n  }\r\n);\r\n"
-                },
-                {
-                  "type": "file",
-                  "path": "src/constants/status-codes.ts",
-                  "content": "export const STATUS_CODES = {\r\n  // 2xx Success\r\n  OK: 200,\r\n  CREATED: 201,\r\n  ACCEPTED: 202,\r\n  NO_CONTENT: 204,\r\n\r\n  // 3xx Redirection\r\n  MOVED_PERMANENTLY: 301,\r\n  FOUND: 302,\r\n  NOT_MODIFIED: 304,\r\n\r\n  // 4xx Client Errors\r\n  BAD_REQUEST: 400,\r\n  UNAUTHORIZED: 401,\r\n  FORBIDDEN: 403,\r\n  NOT_FOUND: 404,\r\n  CONFLICT: 409,\r\n  UNPROCESSABLE_ENTITY: 422,\r\n  TOO_MANY_REQUESTS: 429,\r\n\r\n  // 5xx Server Errors\r\n  INTERNAL_SERVER_ERROR: 500,\r\n  NOT_IMPLEMENTED: 501,\r\n  BAD_GATEWAY: 502,\r\n  SERVICE_UNAVAILABLE: 503,\r\n  GATEWAY_TIMEOUT: 504\r\n} as const;\r\n\r\nexport type StatusCode = (typeof STATUS_CODES)[keyof typeof STATUS_CODES];\r\n"
                 },
                 {
                   "type": "file",
@@ -149,17 +149,12 @@
                 {
                   "type": "file",
                   "path": "prisma/schema.prisma",
-                  "content": "generator client {\r\n  provider = \"prisma-client-js\"\r\n}\r\n\r\ndatasource db {\r\n  provider = \"mongodb\"\r\n  url      = env(\"DATABASE_URL\")\r\n}"
+                  "content": "generator client {\r\n  provider = \"prisma-client-js\"\r\n}\r\n\r\ndatasource db {\r\n  provider = \"mongodb\"\r\n  url      = env(\"DATABASE_URL\")\r\n}\r\n\r\nmodel User { \r\n  id    String  @id @default(auto()) @map(\"_id\") @db.ObjectId\r\n  email String  @unique\r\n  name  String?\r\n  password String\r\n} \r\n"
                 },
                 {
                   "type": "file",
-                  "path": "src/modules/health/health.routes.ts",
-                  "content": "import { Router } from \"express\";\r\nimport { healthCheck, detailedHealthCheck } from \"./health.controller\";\r\n\r\nconst router = Router();\r\n\r\nrouter.get(\"/\", healthCheck);\r\nrouter.get(\"/detailed\", detailedHealthCheck);\r\n\r\nexport default router;\r\n"
-                },
-                {
-                  "type": "file",
-                  "path": "src/modules/health/health.controller.ts",
-                  "content": "import { Request, Response } from \"express\";\r\nimport { ApiResponse } from \"../../shared/utils/api-response\";\r\nimport { AsyncHandler } from \"../../shared/utils/async-handler\";\r\n\r\n/**\r\n * Basic health check endpoint\r\n * GET /api/health\r\n */\r\nexport const healthCheck = AsyncHandler(\r\n  async (_req: Request, res: Response) => {\r\n    return ApiResponse.Success(res, \"Service is healthy\", {\r\n      status: \"healthy\",\r\n      timestamp: new Date().toISOString(),\r\n      uptime: process.uptime()\r\n    });\r\n  }\r\n);\r\n\r\n/**\r\n * Detailed health check with system information\r\n * GET /api/health/detailed\r\n */\r\nexport const detailedHealthCheck = AsyncHandler(\r\n  async (_req: Request, res: Response) => {\r\n    const healthData = {\r\n      status: \"healthy\",\r\n      timestamp: new Date().toISOString(),\r\n      uptime: process.uptime(),\r\n      environment: process.env.NODE_ENV || \"development\",\r\n      version: process.env.npm_package_version || \"1.0.0\",\r\n      memory: {\r\n        used:\r\n          Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) /\r\n          100,\r\n        total:\r\n          Math.round((process.memoryUsage().heapTotal / 1024 / 1024) * 100) /\r\n          100,\r\n        unit: \"MB\"\r\n      },\r\n      cpu: {\r\n        usage: process.cpuUsage()\r\n      }\r\n    };\r\n\r\n    return ApiResponse.Success(res, \"Service is healthy\", healthData);\r\n  }\r\n);\r\n"
+                  "path": "src/routes/index.ts",
+                  "content": "import { Router } from \"express\";\r\nimport HealthRouter from \"../modules/health/health.routes\";\r\n\r\nconst router = Router();\r\n\r\nrouter.use(\"/health\", HealthRouter);\r\n\r\nexport default router;\r\n"
                 },
                 {
                   "type": "file",
@@ -170,21 +165,6 @@
                   "type": "file",
                   "path": "src/configs/env.ts",
                   "content": "import \"dotenv-flow/config\";\r\nimport { z } from \"zod\";\r\n\r\nexport const envSchema = z.object({\r\n  NODE_ENV: z\r\n    .enum([\"development\", \"test\", \"production\"])\r\n    .default(\"development\"),\r\n\r\n  PORT: z.string().regex(/^\\d+$/, \"PORT must be a number\").transform(Number),\r\n\r\n  DATABASE_URL: z.url(),\r\n\r\n  LOG_LEVEL: z\r\n    .enum([\"fatal\", \"error\", \"warn\", \"info\", \"debug\", \"trace\"])\r\n    .default(\"info\"),\r\n\r\n  CORS_ORIGIN: z.string()\r\n});\r\n\r\nexport type Env = z.infer<typeof envSchema>;\r\n\r\nconst result = envSchema.safeParse(process.env);\r\n\r\nif (!result.success) {\r\n  console.error(\"❌ Invalid environment configuration\");\r\n  console.error(z.prettifyError(result.error));\r\n  process.exit(1);\r\n}\r\n\r\nexport const env: Readonly<Env> = Object.freeze(result.data);\r\n\r\nexport default env;\r\n"
-                },
-                {
-                  "type": "file",
-                  "path": "src/routes/index.ts",
-                  "content": "import { Router } from \"express\";\r\nimport HealthRouter from \"../modules/health/health.routes\";\r\n\r\nconst router = Router();\r\n\r\nrouter.use(\"/health\", HealthRouter);\r\n\r\nexport default router;\r\n"
-                },
-                {
-                  "type": "file",
-                  "path": "src/shared/middlewares/not-found-handler.ts",
-                  "content": "import { Request, Response, NextFunction } from \"express\";\r\nimport { ApiError } from \"../errors/api-error\";\r\n\r\nexport const notFoundHandler = (\r\n  req: Request,\r\n  res: Response,\r\n  next: NextFunction\r\n) => {\r\n  throw ApiError.notFound(`Route ${req.method} ${req.originalUrl} not found`);\r\n};\r\n"
-                },
-                {
-                  "type": "file",
-                  "path": "src/shared/middlewares/error-handler.ts",
-                  "content": "import { Request, Response, NextFunction } from \"express\";\r\nimport env from \"../../configs/env\";\r\n\r\nimport { ApiError } from \"../errors/api-error\";\r\nimport { logger } from \"../utils/logger\";\r\n\r\nexport const errorHandler = (\r\n  err: Error,\r\n  req: Request,\r\n  res: Response,\r\n  next: NextFunction\r\n) => {\r\n  let statusCode = 500;\r\n  let message = \"Internal server error\";\r\n\r\n  if (err instanceof ApiError) {\r\n    statusCode = err.statusCode;\r\n    message = err.message;\r\n  }\r\n\r\n  logger.error(\r\n    err,\r\n    `Error: ${message} | Status: ${statusCode} | Path: ${req.method} ${req.originalUrl}`\r\n  );\r\n\r\n  const response = {\r\n    success: false,\r\n    message,\r\n    ...(env.NODE_ENV === \"development\" && { stack: err.stack })\r\n  };\r\n\r\n  res.status(statusCode).json(response);\r\n};\r\n"
                 },
                 {
                   "type": "file",
@@ -208,13 +188,33 @@
                 },
                 {
                   "type": "file",
-                  "path": "src/shared/constants/status-codes.ts",
-                  "content": "export const STATUS_CODES = {\r\n  // 2xx Success\r\n  OK: 200,\r\n  CREATED: 201,\r\n  ACCEPTED: 202,\r\n  NO_CONTENT: 204,\r\n\r\n  // 3xx Redirection\r\n  MOVED_PERMANENTLY: 301,\r\n  FOUND: 302,\r\n  NOT_MODIFIED: 304,\r\n\r\n  // 4xx Client Errors\r\n  BAD_REQUEST: 400,\r\n  UNAUTHORIZED: 401,\r\n  FORBIDDEN: 403,\r\n  NOT_FOUND: 404,\r\n  CONFLICT: 409,\r\n  UNPROCESSABLE_ENTITY: 422,\r\n  TOO_MANY_REQUESTS: 429,\r\n\r\n  // 5xx Server Errors\r\n  INTERNAL_SERVER_ERROR: 500,\r\n  NOT_IMPLEMENTED: 501,\r\n  BAD_GATEWAY: 502,\r\n  SERVICE_UNAVAILABLE: 503,\r\n  GATEWAY_TIMEOUT: 504\r\n} as const;\r\n\r\nexport type StatusCode = (typeof STATUS_CODES)[keyof typeof STATUS_CODES];\r\n"
+                  "path": "src/shared/middlewares/not-found-handler.ts",
+                  "content": "import { Request, Response, NextFunction } from \"express\";\r\nimport { ApiError } from \"../errors/api-error\";\r\n\r\nexport const notFoundHandler = (\r\n  req: Request,\r\n  res: Response,\r\n  next: NextFunction\r\n) => {\r\n  throw ApiError.notFound(`Route ${req.method} ${req.originalUrl} not found`);\r\n};\r\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/shared/middlewares/error-handler.ts",
+                  "content": "import { Request, Response, NextFunction } from \"express\";\r\nimport env from \"../../configs/env\";\r\n\r\nimport { ApiError } from \"../errors/api-error\";\r\nimport { logger } from \"../utils/logger\";\r\n\r\nexport const errorHandler = (\r\n  err: Error,\r\n  req: Request,\r\n  res: Response,\r\n  next: NextFunction\r\n) => {\r\n  let statusCode = 500;\r\n  let message = \"Internal server error\";\r\n\r\n  if (err instanceof ApiError) {\r\n    statusCode = err.statusCode;\r\n    message = err.message;\r\n  }\r\n\r\n  logger.error(\r\n    err,\r\n    `Error: ${message} | Status: ${statusCode} | Path: ${req.method} ${req.originalUrl}`\r\n  );\r\n\r\n  const response = {\r\n    success: false,\r\n    message,\r\n    ...(env.NODE_ENV === \"development\" && { stack: err.stack })\r\n  };\r\n\r\n  res.status(statusCode).json(response);\r\n};\r\n"
                 },
                 {
                   "type": "file",
                   "path": "src/shared/errors/api-error.ts",
                   "content": "import { STATUS_CODES, StatusCode } from \"../constants/status-codes\";\r\n\r\nexport class ApiError extends Error {\r\n  public readonly statusCode: StatusCode;\r\n  public readonly isOperational: boolean;\r\n  public readonly errors?: unknown;\r\n\r\n  constructor(\r\n    statusCode: StatusCode,\r\n    message: string,\r\n    errors?: unknown,\r\n    isOperational = true\r\n  ) {\r\n    super(message);\r\n    this.name = \"ApiError\";\r\n    this.statusCode = statusCode;\r\n    this.errors = errors;\r\n    this.isOperational = isOperational;\r\n\r\n    Error.captureStackTrace(this, this.constructor);\r\n  }\r\n\r\n  static badRequest(message = \"Bad Request\", errors?: unknown) {\r\n    return new ApiError(STATUS_CODES.BAD_REQUEST, message, errors);\r\n  }\r\n\r\n  static unauthorized(message = \"Unauthorized\") {\r\n    return new ApiError(STATUS_CODES.UNAUTHORIZED, message);\r\n  }\r\n\r\n  static forbidden(message = \"Forbidden\") {\r\n    return new ApiError(STATUS_CODES.FORBIDDEN, message);\r\n  }\r\n\r\n  static notFound(message = \"Not Found\") {\r\n    return new ApiError(STATUS_CODES.NOT_FOUND, message);\r\n  }\r\n\r\n  static conflict(message = \"Conflict\") {\r\n    return new ApiError(STATUS_CODES.CONFLICT, message);\r\n  }\r\n\r\n  static validation(message = \"Validation failed\", errors?: unknown) {\r\n    return new ApiError(STATUS_CODES.BAD_REQUEST, message, errors);\r\n  }\r\n\r\n  static notImplemented(message = \"Not Implemented\") {\r\n    return new ApiError(STATUS_CODES.NOT_IMPLEMENTED, message);\r\n  }\r\n\r\n  static badGateway(message = \"Bad Gateway\") {\r\n    return new ApiError(STATUS_CODES.BAD_GATEWAY, message);\r\n  }\r\n\r\n  static serviceUnavailable(message = \"Service Unavailable\") {\r\n    return new ApiError(STATUS_CODES.SERVICE_UNAVAILABLE, message);\r\n  }\r\n\r\n  static tooManyRequests(message = \"Too Many Requests\") {\r\n    return new ApiError(STATUS_CODES.TOO_MANY_REQUESTS, message);\r\n  }\r\n\r\n  static server(message = \"Internal Server Error\") {\r\n    return new ApiError(STATUS_CODES.INTERNAL_SERVER_ERROR, message);\r\n  }\r\n}\r\n\r\n/*\r\n * Usage:\r\n * throw new ApiError(STATUS_CODES.NOT_FOUND, \"Not found\");\r\n * throw ApiError.badRequest(\"Bad request\");\r\n */\r\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/shared/constants/status-codes.ts",
+                  "content": "export const STATUS_CODES = {\r\n  // 2xx Success\r\n  OK: 200,\r\n  CREATED: 201,\r\n  ACCEPTED: 202,\r\n  NO_CONTENT: 204,\r\n\r\n  // 3xx Redirection\r\n  MOVED_PERMANENTLY: 301,\r\n  FOUND: 302,\r\n  NOT_MODIFIED: 304,\r\n\r\n  // 4xx Client Errors\r\n  BAD_REQUEST: 400,\r\n  UNAUTHORIZED: 401,\r\n  FORBIDDEN: 403,\r\n  NOT_FOUND: 404,\r\n  CONFLICT: 409,\r\n  UNPROCESSABLE_ENTITY: 422,\r\n  TOO_MANY_REQUESTS: 429,\r\n\r\n  // 5xx Server Errors\r\n  INTERNAL_SERVER_ERROR: 500,\r\n  NOT_IMPLEMENTED: 501,\r\n  BAD_GATEWAY: 502,\r\n  SERVICE_UNAVAILABLE: 503,\r\n  GATEWAY_TIMEOUT: 504\r\n} as const;\r\n\r\nexport type StatusCode = (typeof STATUS_CODES)[keyof typeof STATUS_CODES];\r\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/modules/health/health.routes.ts",
+                  "content": "import { Router } from \"express\";\r\nimport { healthCheck, detailedHealthCheck } from \"./health.controller\";\r\n\r\nconst router = Router();\r\n\r\nrouter.get(\"/\", healthCheck);\r\nrouter.get(\"/detailed\", detailedHealthCheck);\r\n\r\nexport default router;\r\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/modules/health/health.controller.ts",
+                  "content": "import { Request, Response } from \"express\";\r\nimport { ApiResponse } from \"../../shared/utils/api-response\";\r\nimport { AsyncHandler } from \"../../shared/utils/async-handler\";\r\n\r\n/**\r\n * Basic health check endpoint\r\n * GET /api/health\r\n */\r\nexport const healthCheck = AsyncHandler(\r\n  async (_req: Request, res: Response) => {\r\n    return ApiResponse.Success(res, \"Service is healthy\", {\r\n      status: \"healthy\",\r\n      timestamp: new Date().toISOString(),\r\n      uptime: process.uptime()\r\n    });\r\n  }\r\n);\r\n\r\n/**\r\n * Detailed health check with system information\r\n * GET /api/health/detailed\r\n */\r\nexport const detailedHealthCheck = AsyncHandler(\r\n  async (_req: Request, res: Response) => {\r\n    const healthData = {\r\n      status: \"healthy\",\r\n      timestamp: new Date().toISOString(),\r\n      uptime: process.uptime(),\r\n      environment: process.env.NODE_ENV || \"development\",\r\n      version: process.env.npm_package_version || \"1.0.0\",\r\n      memory: {\r\n        used:\r\n          Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) /\r\n          100,\r\n        total:\r\n          Math.round((process.memoryUsage().heapTotal / 1024 / 1024) * 100) /\r\n          100,\r\n        unit: \"MB\"\r\n      },\r\n      cpu: {\r\n        usage: process.cpuUsage()\r\n      }\r\n    };\r\n\r\n    return ApiResponse.Success(res, \"Service is healthy\", healthData);\r\n  }\r\n);\r\n"
                 }
               ]
             }
