@@ -105,8 +105,13 @@
                     }
                   },
                   "dependencies": {
-                    "runtime": ["mysql2", "drizzle-orm"],
-                    "dev": ["drizzle-kit"]
+                    "runtime": [
+                      "mysql2",
+                      "drizzle-orm"
+                    ],
+                    "dev": [
+                      "drizzle-kit"
+                    ]
                   }
                 }
               }
@@ -211,8 +216,14 @@
                     }
                   },
                   "dependencies": {
-                    "runtime": ["pg", "drizzle-orm"],
-                    "dev": ["@types/pg", "drizzle-kit"]
+                    "runtime": [
+                      "pg",
+                      "drizzle-orm"
+                    ],
+                    "dev": [
+                      "@types/pg",
+                      "drizzle-kit"
+                    ]
                   }
                 }
               }
@@ -277,7 +288,9 @@
                     }
                   },
                   "dependencies": {
-                    "runtime": ["mongoose"],
+                    "runtime": [
+                      "mongoose"
+                    ],
                     "dev": []
                   }
                 }
