@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Route } from "next";
 import { motion } from "motion/react";
-import { IRegistryItems } from "@/@types/registry";
+import { IRegistryItems, ISchema } from "@/@types/registry";
 
 import { cn } from "@/lib/utils";
 import { getRegistryTypeItems } from "@/lib/source";
@@ -77,7 +77,7 @@ export default function DocsSidebar({
     },
     {
       title: ITEM_GROUP_NAMING.tooling,
-      items: getRegistryTypeItems("tooling") 
+      items: getRegistryTypeItems("tooling")
     },
     {
       title: ITEM_GROUP_NAMING.component,
@@ -132,7 +132,6 @@ export default function DocsSidebar({
 
       {navSections.map(section => {
         if (!section.items.length) return null;
-
         return (
           <div key={section.title}>
             <h3 className="w-11/12 pb-4 text-sm font-[450] uppercase">
@@ -158,7 +157,7 @@ export default function DocsSidebar({
                       onClick={onLinkClickAction}
                       href={itemUrl as Route}
                       className={cn(
-                        "relative flex w-full cursor-pointer items-center justify-between pl-4 text-base font-medium transition-colors",
+                        "relative flex w-full cursor-pointer items-center gap-4 pl-4 text-base font-medium transition-colors",
                         isActive
                           ? "text-accent-foreground"
                           : "text-muted-primary hover:text-primary"
@@ -176,66 +175,62 @@ export default function DocsSidebar({
                           }}
                         />
                       )}
-
                       <span>{item.title}</span>
-
+                      {item.meta?.new && (
+                        <span className="h-2 w-2 rounded-full bg-blue-500" />
+                      )}
                       {section.title !== "Pages" &&
                         item.status !== "stable" && (
                           <span className="ml-2 h-2 w-2 rounded-full bg-yellow-500" />
                         )}
                     </Link>
 
-                    {/* Schema or Blueprint databases or models */}
-                    {isNested &&
-                      (item.meta?.databases || item.meta?.models) && (
-                        <ul className="mt-2 ml-4 space-y-2 border-l border-zinc-200 pl-4 dark:border-zinc-800">
-                          {(item.meta!.databases || item.meta!.models!)
-                            .sort((a, b) => a.label.localeCompare(b.label))
-                            .map((subItem: { label: string; slug: string }) => {
-                              const typePath =
-                                item.type === "schema"
-                                  ? "schemas"
-                                  : "blueprints";
-                              const subPath = `/docs/${subItem.slug}`;
-                              const subActive =
-                                pathname === subPath ||
-                                pathname.startsWith(`${subPath}/`);
-                      
-                              return (
-                                <li key={subItem.slug}>
-                                  <Link
-                                    onClick={onLinkClickAction}
-                                    href={subPath as Route}
-                                    className={cn(
-                                      "relative block text-sm capitalize transition-colors",
-                                      subActive
-                                        ? "text-accent-foreground font-medium"
-                                        : "text-muted-secondary hover:text-primary"
-                                    )}>
-                                    {subActive && (
-                                      <motion.span
-                                        layoutId="nested-sidebar-indicator"
-                                        className="bg-primary absolute top-0 -left-4.25 h-full w-px"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{
-                                          type: "spring",
-                                          stiffness: 300,
-                                          damping: 30
-                                        }}
-                                      />
-                                    )}
-                                    <span>
-                                      {" "}
-                                      {subItem.label}{" "}
-                                      {item.meta?.models ? "Schema" : ""}
-                                    </span>
-                                  </Link>
-                                </li>
-                              );
-                            })}
-                        </ul>
-                      )}
+                    {/* Schema or Blueprint databases */}
+                    {isNested && item.meta?.databases && (
+                      <ul className="mt-2 ml-4 space-y-2 border-l border-zinc-200 pl-4 dark:border-zinc-800">
+                        {item
+                          .meta!.databases.sort((a, b) =>
+                            a.label.localeCompare(b.label)
+                          )
+                          .map((subItem: ISchema) => {
+                            const subPath = `/docs/${subItem.slug}`;
+                            const subActive =
+                              pathname === subPath ||
+                              pathname.startsWith(`${subPath}/`);
+                            return (
+                              <li key={subItem.slug}>
+                                <Link
+                                  onClick={onLinkClickAction}
+                                  href={subPath as Route}
+                                  className={cn(
+                                    "relative flex items-center gap-2 text-sm capitalize transition-colors",
+                                    subActive
+                                      ? "text-accent-foreground font-medium"
+                                      : "text-muted-secondary hover:text-primary"
+                                  )}>
+                                  {subActive && (
+                                    <motion.span
+                                      layoutId="nested-sidebar-indicator"
+                                      className="bg-primary absolute top-0 -left-4.25 h-full w-px"
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      transition={{
+                                        type: "spring",
+                                        stiffness: 300,
+                                        damping: 30
+                                      }}
+                                    />
+                                  )}
+                                  <span>{subItem.label}</span>
+                                  {subItem?.new && (
+                                    <span className="h-2 w-2 rounded-full bg-blue-500" />
+                                  )}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                      </ul>
+                    )}
                   </li>
                 );
               })}

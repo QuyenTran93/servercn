@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { ArrowRight, LucideTerminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { FaGithub } from "react-icons/fa";
@@ -24,7 +24,7 @@ export default function HeroSection() {
               <Link
                 href={"/docs/installation"}
                 className="flex items-center gap-2">
-                <span>Build backends by composition, not boilerplate</span>
+                <span>The shadcn philosophy for Node.js backends</span>
                 <div className="bg-background group-hover:bg-muted size-6 overflow-hidden rounded-full duration-500">
                   <div className="flex w-12 -translate-x-1/2 duration-500 ease-in-out group-hover:translate-x-0">
                     <span className="flex size-6">
@@ -53,7 +53,7 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className="text-muted-primary mx-auto mt-6 max-w-2xl text-lg leading-relaxed tracking-tight md:text-xl">
-              ServerCN is a{" "}
+              Servercn is a{" "}
               <span className="text-accent-foreground font-medium">
                 component registry
               </span>{" "}
@@ -61,7 +61,7 @@ export default function HeroSection() {
               <span className="text-accent-foreground font-medium">
                 Node.js backends
               </span>{" "}
-              by composition. Inspired by shadcn/ui, ServerCN standardizes
+              by composition. Inspired by shadcn/ui, Servercn standardizes
               backend patterns so you can focus on business logic, not
               boilerplate.
             </motion.div>
@@ -76,8 +76,8 @@ export default function HeroSection() {
                   "h-10 px-1 sm:h-11 sm:w-40 sm:px-8"
                 )}>
                 <Link href="/docs" className="flex items-center gap-2">
+                  <LucideTerminal className="size-4" />
                   <span>Get Started</span>
-                  <ChevronRight className="size-4" />
                 </Link>
               </Button>
               <Button
@@ -106,15 +106,6 @@ export default function HeroSection() {
               <InitCopyButton />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mt-8 flex items-center justify-center">
-              <span className="text-muted-secondary font-mono">
-                The shadcn/ui philosophy for Node.js backends
-              </span>
-            </motion.div>
           </div>
         </div>
       </div>
