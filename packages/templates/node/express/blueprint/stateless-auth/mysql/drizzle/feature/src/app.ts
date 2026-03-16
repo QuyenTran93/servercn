@@ -20,8 +20,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: "*",
-    credentials: true,
-  }),
+    credentials: true
+  })
 );
 app.use(helmet());
 app.use(cookieParser());
@@ -36,7 +36,6 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api", Routes);
-
 
 startRefreshTokenCleanupJob();
 

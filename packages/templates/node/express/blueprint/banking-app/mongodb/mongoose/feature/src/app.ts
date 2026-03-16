@@ -31,7 +31,6 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api", Routes);
 
-
 //? Not-found-handler (should be after routes)
 app.use(notFoundHandler);
 
