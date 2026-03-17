@@ -11,7 +11,7 @@ export interface IRegistryItems {
   title: string;
   description?: string;
   type: string;
-  status: string;
+  status: "stable" | "unstable" | "beta" | "experimental" | "deprecated";
   frameworks?: string[]; // List of supported frameworks: ["express", "nestjs"]
   docs?: string;
   url?: string;
