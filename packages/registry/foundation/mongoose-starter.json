@@ -26,24 +26,12 @@
               "swagger-ui-express"
             ],
             "dev": [
-              "typescript",
-              "tsx",
-              "tsc-alias",
-              "@types/node",
               "@types/express",
               "morgan",
               "@types/cors",
               "@types/morgan",
               "@types/cookie-parser",
-              "prettier",
-              "@commitlint/cli",
-              "@commitlint/config-conventional",
               "@types/source-map-support",
-              "lint-staged",
-              "@typescript-eslint/eslint-plugin",
-              "@typescript-eslint/parser",
-              "eslint",
-              "eslint-plugin-prettier",
               "@types/swagger-ui-express"
             ]
           },
