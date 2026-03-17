@@ -179,6 +179,13 @@
     },
     {
       "type": "blueprint",
+      "slug": "stateful-auth",
+      "frameworks": [
+        "express"
+      ]
+    },
+    {
+      "type": "blueprint",
       "slug": "banking-app",
       "frameworks": [
         "express"
