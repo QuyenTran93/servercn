@@ -5,13 +5,19 @@ export interface ISchema {
 }
 
 export type Framework = "express" | "nestjs";
+export type StatusType =
+  | "stable"
+  | "unstable"
+  | "beta"
+  | "experimental"
+  | "deprecated";
 
 export interface IRegistryItems {
   slug: string;
   title: string;
   description?: string;
   type: string;
-  status: "stable" | "unstable" | "beta" | "experimental" | "deprecated";
+  status: string;
   frameworks?: string[]; // List of supported frameworks: ["express", "nestjs"]
   docs?: string;
   url?: string;
