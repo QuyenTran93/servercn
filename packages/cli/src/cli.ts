@@ -7,6 +7,7 @@ import type { Architecture, RegistryType } from "@/types";
 import { LATEST_VERSION } from "@/constants/app.constants";
 import { registryListCommands } from "./commands/list";
 import { build, type buildTypeProps } from "./commands/_build";
+import { doctor } from "./commands/doctor";
 
 const program = new Command();
 
@@ -33,6 +34,13 @@ async function main() {
   registryListCommands(program);
 
   program
+    .command("doctor")
+    .description(
+      "Print upgrade guidance and optional merge-marker checks for this project"
+    )
+    .action(doctor);
+
+  program
     .command("build")
     .description("Build the project")
     .option("--name <name>", "App name, website name")
@@ -46,7 +54,7 @@ async function main() {
     .option("-f, --force", "Force overwrite existing files")
     .option(
       "--merge",
-      "Merge merge-only fragments (// @servercn:begin/end <slug>) into existing files; pilot: rate-limiter"
+      "Merge merge-only fragments (// @servercn:begin/end <slug>) into existing files"
     )
     .option(
       "--local",

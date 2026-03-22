@@ -41,6 +41,14 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/v1", Routes);
 
+// @servercn:begin rate-limiter
+
+// @servercn:end rate-limiter
+
+// @servercn:begin security-header
+
+// @servercn:end security-header
+
 // Not found handler (should be after routes)
 app.use(notFoundHandler);
 

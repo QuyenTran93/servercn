@@ -49,6 +49,14 @@ app.use("/api/health", healthRoutes);
 
 // @servercn:end async-handler
 
+// @servercn:begin request-validator
+
+// @servercn:end request-validator
+
+// @servercn:begin verify-auth-middleware
+
+// @servercn:end verify-auth-middleware
+
 // Not found handler (should be after routes)
 app.use(notFoundHandler);
 

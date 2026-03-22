@@ -82,6 +82,23 @@ We have configured several helper scripts in the root `package.json`:
 - `npm run lint`: Lint all files.
 - `npm run format:fix`: Format code with Prettier.
 
+## 📣 Releases & scaffold changes
+
+When a PR changes **templates**, **registry** output, or **CLI scaffold behavior** (including `--merge`, markers, or foundation layout), add a short **“Existing projects”** note to the PR description or changelog: what users who already ran `init` should do (e.g. copy new markers, run `doctor`, or accept `--force`).
+
+### Express merge markers (all merge-layout foundations)
+
+Slugs that support `add <slug> --merge` and **which project file** must contain `// @servercn:begin|end <slug>` are centralized in `packages/cli/src/constants/express-merge-slots.ts` (`EXPRESS_MERGE_SLOTS`). Foundations that ship the same slot paths are listed as `EXPRESS_MERGE_FOUNDATIONS` (Express starters under `packages/templates/node/express/foundation/`). When adding or moving a merge slot:
+
+1. Update **every** foundation in `EXPRESS_MERGE_FOUNDATIONS` (MVC and feature trees) so markers stay in sync.
+2. Ensure the component template has a **merge-only** file at the same relative path (single begin/end block for that slug — see `packages/cli/src/lib/merge-marker.ts`).
+3. Update the README merge table in `packages/cli/README.md`.
+4. From `packages/cli`, run `npm run test:express-merge-foundation` (and `npm run test:merge-marker` if you touch merge logic).
+
+See also `packages/templates/node/express/component/README.md` for how components are grouped.
+
+**Regression subset (merge-critical):** the canonical list of merge-capable Express slugs is `EXPRESS_MERGE_SLUGS` in `packages/cli/src/constants/express-merge-slots.ts` (currently `rate-limiter`, `security-header`, `async-handler`, `request-validator`, `verify-auth-middleware`). CI / local regression for markers and foundation layout: from repo root run `npm run test:cli-express-merge` (runs all CLI selftests in that package). A full `init` + `add --merge` E2E in a temp directory is optional and not required for that script.
+
 ## 🚀 Submitting Changes
 
 1. **Create a Branch**:

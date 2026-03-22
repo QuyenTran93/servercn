@@ -14,16 +14,9 @@
     "format:check": "npx prettier . --check",
     "format:fix": "npx prettier . --write",
     "build:cli": "npm run build -w packages/cli",
+    "test:cli-express-merge": "npm run test:express-merge-all -w @quyentran93/servercn-cli",
     "link:cli": "npm link -w packages/cli",
     "prepare": "husky"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "npx eslint --fix"
-    ],
-    "*.{json,css}": [
-      "npx prettier --write"
-    ]
   },
   "devDependencies": {
     "@commitlint/cli": "^20.3.1",

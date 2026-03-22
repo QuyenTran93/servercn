@@ -46,7 +46,7 @@
                 {
                   "type": "file",
                   "path": "src/modules/user/user.routes.ts",
-                  "content": "import { NextFunction, Request, Response, Router } from \"express\";\nimport { AsyncHandler } from \"../../../shared/utils/async-handler\";\n\nconst router = Router();\n\nrouter.get(\n  \"/\",\n  AsyncHandler(async (req: Request, res: Response, next: NextFunction) => {\n    /*\n     * business logic\n     * your actual code\n     */\n  })\n);\n\nexport default router;\n"
+                  "content": "import { NextFunction, Request, Response, Router } from \"express\";\nimport { AsyncHandler } from \"../../shared/utils/async-handler\";\n\nconst router = Router();\n\nrouter.get(\n  \"/\",\n  AsyncHandler(async (req: Request, res: Response, next: NextFunction) => {\n    /*\n     * business logic\n     * your actual code\n     */\n  })\n);\n\nexport default router;\n"
                 }
               ]
             }

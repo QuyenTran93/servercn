@@ -66,7 +66,7 @@
                 {
                   "type": "file",
                   "path": "src/app.ts",
-                  "content": "import express, { Express, Request, Response } from \"express\";\nimport cors from \"cors\";\nimport helmet from \"helmet\";\nimport cookieParser from \"cookie-parser\";\nimport morgan from \"morgan\";\nimport { notFoundHandler } from \"./middlewares/not-found-handler\";\nimport { errorHandler } from \"./middlewares/error-handler\";\nimport { setupSwagger } from \"./configs/swagger\";\nimport healthRoutes from \"./routes/health.routes\";\n\nimport sourceMapSupport from \"source-map-support\";\nimport env from \"./configs/env\";\nsourceMapSupport.install();\n\nconst app: Express = express();\n\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\napp.use(\n  cors({\n    origin: env.CORS_ORIGIN || \"*\",\n    methods: [\"GET\", \"POST\", \"PUT\", \"DELETE\", \"PATCH\", \"OPTIONS\"],\n    allowedHeaders: [\"Content-Type\", \"Authorization\", \"X-Requested-With\"],\n    credentials: true\n  })\n);\napp.use(helmet());\napp.use(cookieParser());\napp.use(morgan(process.env.NODE_ENV === \"development\" ? \"dev\" : \"combined\"));\n\n//? Swagger Setup\nsetupSwagger(app);\n\n//? Routes\napp.get(\"/\", (req: Request, res: Response) => {\n  res.redirect(\"/api/v1/health\");\n});\n\napp.use(\"/api/v1/health\", healthRoutes);\n\n// Not found handler (should be after routes)\napp.use(notFoundHandler);\n\n// Global error handler (should be last)\napp.use(errorHandler);\n\nexport default app;\n"
+                  "content": "import express, { Express, Request, Response } from \"express\";\nimport cors from \"cors\";\nimport helmet from \"helmet\";\nimport cookieParser from \"cookie-parser\";\nimport morgan from \"morgan\";\nimport { notFoundHandler } from \"./middlewares/not-found-handler\";\nimport { errorHandler } from \"./middlewares/error-handler\";\nimport { setupSwagger } from \"./configs/swagger\";\nimport healthRoutes from \"./routes/health.routes\";\n\nimport sourceMapSupport from \"source-map-support\";\nimport env from \"./configs/env\";\nsourceMapSupport.install();\n\nconst app: Express = express();\n\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\napp.use(\n  cors({\n    origin: env.CORS_ORIGIN || \"*\",\n    methods: [\"GET\", \"POST\", \"PUT\", \"DELETE\", \"PATCH\", \"OPTIONS\"],\n    allowedHeaders: [\"Content-Type\", \"Authorization\", \"X-Requested-With\"],\n    credentials: true\n  })\n);\napp.use(helmet());\napp.use(cookieParser());\napp.use(morgan(process.env.NODE_ENV === \"development\" ? \"dev\" : \"combined\"));\n\n//? Swagger Setup\nsetupSwagger(app);\n\n//? Routes\napp.get(\"/\", (req: Request, res: Response) => {\n  res.redirect(\"/api/v1/health\");\n});\n\napp.use(\"/api/v1/health\", healthRoutes);\n\n// @servercn:begin rate-limiter\n\n// @servercn:end rate-limiter\n\n// @servercn:begin security-header\n\n// @servercn:end security-header\n\n// @servercn:begin async-handler\n\n// @servercn:end async-handler\n\n// @servercn:begin request-validator\n\n// @servercn:end request-validator\n\n// @servercn:begin verify-auth-middleware\n\n// @servercn:end verify-auth-middleware\n\n// Not found handler (should be after routes)\napp.use(notFoundHandler);\n\n// Global error handler (should be last)\napp.use(errorHandler);\n\nexport default app;\n"
                 },
                 {
                   "type": "file",
@@ -95,6 +95,11 @@
                 },
                 {
                   "type": "file",
+                  "path": "src/routes/health.routes.ts",
+                  "content": "import { Router } from \"express\";\nimport {\n  healthCheck,\n  detailedHealthCheck\n} from \"../controllers/health.controller\";\n\nconst router = Router();\n\nrouter.get(\"/\", healthCheck);\nrouter.get(\"/detailed\", detailedHealthCheck);\n\nexport default router;\n"
+                },
+                {
+                  "type": "file",
                   "path": "src/middlewares/not-found-handler.ts",
                   "content": "import { Request, Response, NextFunction } from \"express\";\nimport { ApiError } from \"../utils/api-error\";\n\nexport const notFoundHandler = (\n  req: Request,\n  res: Response,\n  next: NextFunction\n) => {\n  throw ApiError.notFound(`Route ${req.method} ${req.originalUrl} not found`);\n};\n"
                 },
@@ -112,11 +117,6 @@
                   "type": "file",
                   "path": "src/docs/swagger.json",
                   "content": "{}\n"
-                },
-                {
-                  "type": "file",
-                  "path": "src/routes/health.routes.ts",
-                  "content": "import { Router } from \"express\";\nimport {\n  healthCheck,\n  detailedHealthCheck\n} from \"../controllers/health.controller\";\n\nconst router = Router();\n\nrouter.get(\"/\", healthCheck);\nrouter.get(\"/detailed\", detailedHealthCheck);\n\nexport default router;\n"
                 },
                 {
                   "type": "file",
@@ -175,12 +175,12 @@
                 {
                   "type": "file",
                   "path": "src/app.ts",
-                  "content": "import express, { Express, Request, Response } from \"express\";\nimport cors from \"cors\";\nimport helmet from \"helmet\";\nimport cookieParser from \"cookie-parser\";\nimport morgan from \"morgan\";\n\nimport Routes from \"./routes/index\";\n\nimport { errorHandler } from \"./shared/middlewares/error-handler\";\nimport { notFoundHandler } from \"./shared/middlewares/not-found-handler\";\nimport { setupSwagger } from \"./shared/configs/swagger\";\nimport env from \"./shared/configs/env\";\n\nimport sourceMapSupport from \"source-map-support\";\nsourceMapSupport.install();\n\nconst app: Express = express();\n\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\napp.use(\n  cors({\n    origin: env.CORS_ORIGIN || \"*\",\n    methods: [\"GET\", \"POST\", \"PUT\", \"DELETE\", \"PATCH\", \"OPTIONS\"],\n    allowedHeaders: [\"Content-Type\", \"Authorization\", \"X-Requested-With\"],\n    credentials: true\n  })\n);\napp.use(helmet());\napp.use(cookieParser());\napp.use(morgan(env.NODE_ENV === \"development\" ? \"dev\" : \"combined\"));\n\n//? Swagger Setup\nsetupSwagger(app);\n\n//? Routes\napp.get(\"/\", (req: Request, res: Response) => {\n  res.redirect(\"/api/v1/health\");\n});\n\napp.use(\"/api/v1\", Routes);\n\n// Not found handler (should be after routes)\napp.use(notFoundHandler);\n\n// Global error handler (should be last)\napp.use(errorHandler);\n\nexport default app;\n"
+                  "content": "import express, { Express, Request, Response } from \"express\";\nimport cors from \"cors\";\nimport helmet from \"helmet\";\nimport cookieParser from \"cookie-parser\";\nimport morgan from \"morgan\";\n\nimport Routes from \"./routes/index\";\n\nimport { errorHandler } from \"./shared/middlewares/error-handler\";\nimport { notFoundHandler } from \"./shared/middlewares/not-found-handler\";\nimport { setupSwagger } from \"./shared/configs/swagger\";\nimport env from \"./shared/configs/env\";\n\nimport sourceMapSupport from \"source-map-support\";\nsourceMapSupport.install();\n\nconst app: Express = express();\n\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\napp.use(\n  cors({\n    origin: env.CORS_ORIGIN || \"*\",\n    methods: [\"GET\", \"POST\", \"PUT\", \"DELETE\", \"PATCH\", \"OPTIONS\"],\n    allowedHeaders: [\"Content-Type\", \"Authorization\", \"X-Requested-With\"],\n    credentials: true\n  })\n);\napp.use(helmet());\napp.use(cookieParser());\napp.use(morgan(env.NODE_ENV === \"development\" ? \"dev\" : \"combined\"));\n\n//? Swagger Setup\nsetupSwagger(app);\n\n//? Routes\napp.get(\"/\", (req: Request, res: Response) => {\n  res.redirect(\"/api/v1/health\");\n});\n\napp.use(\"/api/v1\", Routes);\n\n// @servercn:begin rate-limiter\n\n// @servercn:end rate-limiter\n\n// @servercn:begin security-header\n\n// @servercn:end security-header\n\n// Not found handler (should be after routes)\napp.use(notFoundHandler);\n\n// Global error handler (should be last)\napp.use(errorHandler);\n\nexport default app;\n"
                 },
                 {
                   "type": "file",
                   "path": "src/routes/index.ts",
-                  "content": "import { Router } from \"express\";\nimport HealthRouter from \"../modules/health/health.routes\";\n\nconst router = Router();\n\nrouter.use(\"/health\", HealthRouter);\n\nexport default router;\n"
+                  "content": "import { Router } from \"express\";\nimport HealthRouter from \"../modules/health/health.routes\";\n\nconst router = Router();\n\nrouter.use(\"/health\", HealthRouter);\n\n// @servercn:begin request-validator\n\n// @servercn:end request-validator\n\n// @servercn:begin async-handler\n\n// @servercn:end async-handler\n\n// @servercn:begin verify-auth-middleware\n\n// @servercn:end verify-auth-middleware\n\nexport default router;\n"
                 },
                 {
                   "type": "file",
@@ -189,13 +189,13 @@
                 },
                 {
                   "type": "file",
-                  "path": "src/docs/swagger.json",
-                  "content": "{}\n"
+                  "path": "src/db/db.ts",
+                  "content": "import { drizzle } from \"drizzle-orm/node-postgres\";\nimport env from \"../shared/configs/env\";\n\nconst db = drizzle(env.DATABASE_URL!, {\n  logger: env.NODE_ENV === \"development\"\n});\n\nexport default db;\n"
                 },
                 {
                   "type": "file",
-                  "path": "src/db/db.ts",
-                  "content": "import { drizzle } from \"drizzle-orm/node-postgres\";\nimport env from \"../shared/configs/env\";\n\nconst db = drizzle(env.DATABASE_URL!, {\n  logger: env.NODE_ENV === \"development\"\n});\n\nexport default db;\n"
+                  "path": "src/docs/swagger.json",
+                  "content": "{}\n"
                 },
                 {
                   "type": "file",

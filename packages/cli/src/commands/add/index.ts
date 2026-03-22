@@ -25,6 +25,7 @@ import { spinner } from "@/utils/spinner";
 import { execa } from "execa";
 import { updateEnvKeys } from "@/utils/update-env";
 import { getToolingChoices, getToolingDepsFromChoices } from "@/utils/tooling";
+import { isExpressMergeSlug } from "@/constants/express-merge-slots";
 
 export async function add(registryItemName: string, options: AddOptions = {}) {
   await assertInitialized();
@@ -55,6 +56,17 @@ export async function add(registryItemName: string, options: AddOptions = {}) {
     options,
     registryItemName
   });
+
+  if (
+    config.stack.framework === "express" &&
+    isExpressMergeSlug(component.slug) &&
+    !effectiveMerge &&
+    !options.force
+  ) {
+    logger.warn(
+      `${component.slug} supports \`--merge\` for marker-based wiring on express-starter. If files are skipped, run again with --merge (see CLI README).`
+    );
+  }
 
   await scaffoldFiles({
     registryItemName,
