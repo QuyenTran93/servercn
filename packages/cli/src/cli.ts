@@ -45,6 +45,10 @@ async function main() {
     .option("--arch <arch>", "Project architecture: mvc or feature", "mvc")
     .option("-f, --force", "Force overwrite existing files")
     .option(
+      "--merge",
+      "Merge merge-only fragments (// @servercn:begin/end <slug>) into existing files; pilot: rate-limiter"
+    )
+    .option(
       "--local",
       "Add registry items from local environment(development runtime)"
     )
@@ -54,6 +58,7 @@ async function main() {
         options: {
           arch: Architecture;
           force: boolean;
+          merge: boolean;
           local: boolean;
         }
       ) => {
@@ -78,6 +83,7 @@ async function main() {
             arch: options.arch,
             type: type,
             force: options.force,
+            merge: options.merge,
             local: options.local
           });
         }

@@ -29,6 +29,8 @@ export interface AddOptions {
   stack?: StackConfig;
   arch?: Architecture;
   force?: boolean;
+  /** When true, apply merge-only fragments (// @servercn:begin/<end>) into existing files. Ignored if force is true. */
+  merge?: boolean;
   local?: boolean;
   fw?: string;
 }
@@ -38,6 +40,7 @@ export interface CopyOptions {
   registryItemName: string;
   conflict?: ConflictStrategy;
   dryRun?: boolean;
+  merge?: boolean;
 }
 
 export type StackConfig = {

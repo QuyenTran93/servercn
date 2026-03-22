@@ -30,6 +30,11 @@ export async function add(registryItemName: string, options: AddOptions = {}) {
   await assertInitialized();
   validateInput(registryItemName);
 
+  if (options.merge && options.force) {
+    logger.warn("--merge is ignored when --force is set.");
+  }
+  const effectiveMerge = Boolean(options.merge && !options.force);
+
   const config = await getServerCNConfig();
   validateStack(config);
 
@@ -54,7 +59,7 @@ export async function add(registryItemName: string, options: AddOptions = {}) {
   await scaffoldFiles({
     registryItemName,
     templatePath: resolution.templatePath,
-    options,
+    options: { ...options, merge: effectiveMerge },
     component,
     selectedProvider: resolution.selectedProvider
   });
@@ -178,7 +183,8 @@ export async function scaffoldFiles({
       templateDir,
       targetDir,
       registryItemName,
-      conflict: options.force ? "overwrite" : "skip"
+      conflict: options.force ? "overwrite" : "skip",
+      merge: options.merge
     });
   } else {
     const ok = await cloneServercnRegistry({

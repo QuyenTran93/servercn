@@ -5,4 +5,8 @@ const router = Router();
 
 router.use("/health", HealthRouter);
 
+// @servercn:begin async-handler
+
+// @servercn:end async-handler
+
 export default router;

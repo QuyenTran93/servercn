@@ -4,6 +4,10 @@ import { logger } from "@/utils/logger";
 import type { AddOptions, CopyOptions, RegistryItem } from "@/types";
 import { findFilesByPath } from "@/utils/file";
 import { normalizeEol } from "@/utils/normalize-eol";
+import {
+  applyMarkerMerge,
+  isMergeOnlyFragment
+} from "@/lib/merge-marker";
 
 //? development mode
 export async function copyTemplate({
@@ -11,7 +15,8 @@ export async function copyTemplate({
   targetDir,
   registryItemName,
   conflict = "skip",
-  dryRun = false
+  dryRun = false,
+  merge = false
 }: CopyOptions) {
   await fs.ensureDir(targetDir);
 
@@ -31,7 +36,8 @@ export async function copyTemplate({
         targetDir: destPath,
         registryItemName,
         conflict,
-        dryRun
+        dryRun,
+        merge
       });
       continue;
     }
@@ -40,6 +46,35 @@ export async function copyTemplate({
 
     if (exists) {
       if (conflict === "skip") {
+        if (merge && registryItemName) {
+          const peek = await fs.readFile(srcPath);
+          if (!peek.includes(0)) {
+            const srcText = normalizeEol(peek.toString("utf8"));
+            if (isMergeOnlyFragment(srcText, registryItemName)) {
+              const destText = normalizeEol(
+                await fs.readFile(destPath, "utf8")
+              );
+              const merged = applyMarkerMerge(
+                destText,
+                srcText,
+                registryItemName
+              );
+              if (!merged.ok) {
+                logger.error(
+                  `Merge failed for ${relativeDestPath}: destination is missing // @servercn:begin/end ${registryItemName} markers. Add them or use --force.`
+                );
+                process.exit(1);
+              }
+              if (!dryRun) {
+                await fs.writeFile(destPath, merged.content, "utf8");
+                logger.info(`MERGE: ${relativeDestPath}`);
+              } else {
+                logger.info(`[dry-run] merge: ${relativeDestPath}`);
+              }
+              continue;
+            }
+          }
+        }
         logger.skip(relativeDestPath);
         continue;
       }
@@ -57,6 +92,19 @@ export async function copyTemplate({
 
     const buffer = await fs.readFile(srcPath);
     const isBinary = buffer.includes(0);
+
+    if (
+      !exists &&
+      !isBinary &&
+      merge &&
+      registryItemName &&
+      isMergeOnlyFragment(normalizeEol(buffer.toString("utf8")), registryItemName)
+    ) {
+      logger.muted(
+        `SKIP (merge-only fragment, target missing): ${relativeDestPath}`
+      );
+      continue;
+    }
 
     await fs.ensureDir(path.dirname(destPath));
 
@@ -97,23 +145,58 @@ export async function cloneServercnRegistry({
       return false;
     }
 
+    const slug =
+      "slug" in component && typeof component.slug === "string"
+        ? component.slug
+        : "";
+
+    const useMerge = Boolean(options.merge && !options.force && slug);
+
     for (const file of files) {
       const destPath = path.join(targetDir, file.path);
       const exists = await fs.pathExists(destPath);
+      const templateContent = normalizeEol(file.content);
 
-      if (exists && !options.force) {
+      if (options.force) {
+        await fs.ensureDir(path.dirname(destPath));
+        await fs.writeFile(destPath, templateContent, "utf8");
+        if (exists) {
+          logger.overwrite(file.path);
+        } else {
+          logger.create(file.path);
+        }
+        continue;
+      }
+
+      if (useMerge && isMergeOnlyFragment(templateContent, slug)) {
+        if (!exists) {
+          logger.muted(
+            `SKIP (merge-only fragment, target missing): ${file.path}`
+          );
+          continue;
+        }
+        const destText = normalizeEol(await fs.readFile(destPath, "utf8"));
+        const merged = applyMarkerMerge(destText, templateContent, slug);
+        if (!merged.ok) {
+          logger.error(
+            `Merge failed for ${file.path}: destination is missing // @servercn:begin/end ${slug} markers. Add them or use --force.`
+          );
+          process.exit(1);
+        }
+        await fs.ensureDir(path.dirname(destPath));
+        await fs.writeFile(destPath, merged.content, "utf8");
+        logger.info(`MERGE: ${file.path}`);
+        continue;
+      }
+
+      if (exists) {
         logger.skip(file.path);
         continue;
       }
 
       await fs.ensureDir(path.dirname(destPath));
-      await fs.writeFile(destPath, normalizeEol(file.content), "utf8");
-
-      if (exists) {
-        logger.overwrite(file.path);
-      } else {
-        logger.create(file.path);
-      }
+      await fs.writeFile(destPath, templateContent, "utf8");
+      logger.create(file.path);
     }
     return true;
   } catch {
