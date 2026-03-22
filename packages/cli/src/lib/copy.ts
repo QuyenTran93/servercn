@@ -3,6 +3,7 @@ import path from "node:path";
 import { logger } from "@/utils/logger";
 import type { AddOptions, CopyOptions, RegistryItem } from "@/types";
 import { findFilesByPath } from "@/utils/file";
+import { normalizeEol } from "@/utils/normalize-eol";
 
 //? development mode
 export async function copyTemplate({
@@ -62,9 +63,9 @@ export async function copyTemplate({
     if (isBinary) {
       await fs.copyFile(srcPath, destPath);
     } else {
-      const content = buffer.toString("utf8");
+      const content = normalizeEol(buffer.toString("utf8"));
 
-      await fs.writeFile(destPath, content);
+      await fs.writeFile(destPath, content, "utf8");
     }
 
     if (exists) {
@@ -106,7 +107,7 @@ export async function cloneServercnRegistry({
       }
 
       await fs.ensureDir(path.dirname(destPath));
-      await fs.writeFile(destPath, file.content);
+      await fs.writeFile(destPath, normalizeEol(file.content), "utf8");
 
       if (exists) {
         logger.overwrite(file.path);

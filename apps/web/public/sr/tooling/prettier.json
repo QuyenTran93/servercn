@@ -6,12 +6,12 @@
         {
           "type": "tooling",
           "path": ".prettierrc",
-          "content": "{\r\n  \"singleQuote\": false,\r\n  \"semi\": true,\r\n  \"tabWidth\": 2,\r\n  \"trailingComma\": \"none\",\r\n  \"bracketSameLine\": true,\r\n  \"arrowParens\": \"avoid\",\r\n  \"endOfLine\": \"lf\"\r\n}\r\n"
+          "content": "{\n  \"singleQuote\": false,\n  \"semi\": true,\n  \"tabWidth\": 2,\n  \"trailingComma\": \"none\",\n  \"bracketSameLine\": true,\n  \"arrowParens\": \"avoid\",\n  \"endOfLine\": \"lf\"\n}\n"
         },
         {
           "type": "tooling",
           "path": ".prettierignore",
-          "content": "dist\r\nnode_modules\r\ncoverage\r\n.env\r\n.env.*\r\n!.env.example\r\n"
+          "content": "dist\nnode_modules\ncoverage\n.env\n.env.*\n!.env.example\n"
         }
       ]
     }
