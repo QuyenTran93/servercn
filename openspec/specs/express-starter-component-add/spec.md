@@ -16,8 +16,8 @@ Tài liệu người dùng (CLI README và, nếu có, trang installation đồn
 
 Với **mỗi** foundation Express được liệt kê trong `EXPRESS_MERGE_FOUNDATIONS` (constant CLI; cùng bố cục slot với `express-starter`), template trong registry SHALL chứa cặp comment `// @servercn:begin <slug>` và `// @servercn:end <slug>` cho mỗi slug merge-enabled được hỗ trợ trên đúng file theo kiến trúc:
 
-- **MVC**: `mvc/src/app.ts` SHALL có marker cho `rate-limiter`, `security-header`, `async-handler`, `request-validator`, `verify-auth-middleware`.
-- **Feature**: `feature/src/app.ts` SHALL có marker cho `rate-limiter`, `security-header`; `feature/src/routes/index.ts` SHALL có marker cho `request-validator`, `async-handler`, `verify-auth-middleware`.
+- **MVC**: `mvc/src/app.ts` SHALL có marker cho `rate-limiter`, `security-header`, `async-handler`, `request-validator`, `verify-auth-middleware`; và `mvc/src/configs/env.ts` SHALL có marker cho `oauth-google`, `oauth-github`, `rbac`, `jwt-utils`, `file-upload-cloudinary`, và `file-upload-imagekit`.
+- **Feature**: `feature/src/app.ts` SHALL có marker cho `rate-limiter`, `security-header`; `feature/src/routes/index.ts` SHALL có marker cho `request-validator`, `async-handler`, `verify-auth-middleware`; và `feature/src/shared/configs/env.ts` SHALL có marker cho `oauth-google`, `oauth-github`, `rbac`, `jwt-utils`, `file-upload-cloudinary`, và `file-upload-imagekit`.
 
 Các vùng giữa begin/end SHALL có thể để trống trong bản phát hành foundation (nội dung wiring do merge từ component khi người dùng chạy `add <slug> --merge`).
 
@@ -28,8 +28,8 @@ Các vùng giữa begin/end SHALL có thể để trống trong bản phát hàn
 
 #### Scenario: Kiểm tra template Feature
 
-- **WHEN** maintainer mở `feature/src/app.ts` và `feature/src/routes/index.ts` trong cùng một foundation thuộc `EXPRESS_MERGE_FOUNDATIONS`
-- **THEN** `app.ts` SHALL chứa marker cho `rate-limiter` và `security-header`, và `routes/index.ts` SHALL chứa marker cho `request-validator`, `async-handler`, và `verify-auth-middleware`
+- **WHEN** maintainer mở `feature/src/app.ts`, `feature/src/routes/index.ts`, và `feature/src/shared/configs/env.ts` trong cùng một foundation thuộc `EXPRESS_MERGE_FOUNDATIONS`
+- **THEN** `app.ts` SHALL chứa marker cho `rate-limiter` và `security-header`, `routes/index.ts` SHALL chứa marker cho `request-validator`, `async-handler`, và `verify-auth-middleware`, và `shared/configs/env.ts` SHALL chứa đủ marker env như liệt kê ở trên
 
 ### Requirement: Đồng bộ ma trận marker với doctor và tài liệu
 

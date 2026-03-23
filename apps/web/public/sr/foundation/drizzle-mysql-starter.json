@@ -99,6 +99,11 @@
                 },
                 {
                   "type": "file",
+                  "path": "src/drizzle/index.ts",
+                  "content": "//? Export all schemas from schemas directory\n\nexport * from \"./schemas/user.schema\";\n"
+                },
+                {
+                  "type": "file",
                   "path": "src/middlewares/not-found-handler.ts",
                   "content": "import { Request, Response, NextFunction } from \"express\";\nimport { ApiError } from \"../utils/api-error\";\n\nexport const notFoundHandler = (\n  req: Request,\n  res: Response,\n  next: NextFunction\n) => {\n  throw ApiError.notFound(`Route ${req.method} ${req.originalUrl} not found`);\n};\n"
                 },
@@ -106,11 +111,6 @@
                   "type": "file",
                   "path": "src/middlewares/error-handler.ts",
                   "content": "import { Request, Response, NextFunction } from \"express\";\nimport env from \"../configs/env\";\n\nimport { ApiError } from \"../utils/api-error\";\nimport { logger } from \"../utils/logger\";\n\nexport const errorHandler = (\n  err: Error,\n  req: Request,\n  res: Response,\n  next: NextFunction\n) => {\n  let statusCode = 500;\n  let message = \"Internal server error\";\n\n  if (err instanceof ApiError) {\n    statusCode = err.statusCode;\n    message = err.message;\n  }\n\n  logger.error(\n    err,\n    `Error: ${message} | Status: ${statusCode} | Path: ${req.method} ${req.originalUrl}`\n  );\n\n  const response = {\n    success: false,\n    message,\n    ...(env.NODE_ENV === \"development\" && { stack: err.stack })\n  };\n\n  res.status(statusCode).json(response);\n};\n"
-                },
-                {
-                  "type": "file",
-                  "path": "src/drizzle/index.ts",
-                  "content": "//? Export all schemas from schemas directory\n\nexport * from \"./schemas/user.schema\";\n"
                 },
                 {
                   "type": "file",
@@ -135,7 +135,7 @@
                 {
                   "type": "file",
                   "path": "src/configs/env.ts",
-                  "content": "import \"dotenv-flow/config\";\nimport { z } from \"zod\";\n\nexport const envSchema = z.object({\n  NODE_ENV: z\n    .enum([\"development\", \"test\", \"production\"])\n    .default(\"development\"),\n\n  PORT: z.string().regex(/^\\d+$/, \"PORT must be a number\").transform(Number),\n\n  DATABASE_URL: z.url(),\n\n  LOG_LEVEL: z\n    .enum([\"fatal\", \"error\", \"warn\", \"info\", \"debug\", \"trace\"])\n    .default(\"info\"),\n\n  CORS_ORIGIN: z.string().optional()\n});\n\nexport type Env = z.infer<typeof envSchema>;\n\nconst result = envSchema.safeParse(process.env);\n\nif (!result.success) {\n  console.error(\"❌ Invalid environment configuration\");\n  console.error(z.prettifyError(result.error));\n  process.exit(1);\n}\n\nexport const env: Readonly<Env> = Object.freeze(result.data);\n\nexport default env;\n"
+                  "content": "import \"dotenv-flow/config\";\nimport { z } from \"zod\";\n\nexport const envSchema = z.object({\n  NODE_ENV: z\n    .enum([\"development\", \"test\", \"production\"])\n    .default(\"development\"),\n\n  PORT: z.string().regex(/^\\d+$/, \"PORT must be a number\").transform(Number),\n\n  DATABASE_URL: z.url(),\n\n  LOG_LEVEL: z\n    .enum([\"fatal\", \"error\", \"warn\", \"info\", \"debug\", \"trace\"])\n    .default(\"info\"),\n\n  CORS_ORIGIN: z.string().optional(),\n\n  // @servercn:begin oauth-google\n  // @servercn:end oauth-google\n\n  // @servercn:begin oauth-github\n  // @servercn:end oauth-github\n\n  // @servercn:begin rbac\n  // @servercn:end rbac\n\n  // @servercn:begin jwt-utils\n  // @servercn:end jwt-utils\n\n  // @servercn:begin file-upload-cloudinary\n  // @servercn:end file-upload-cloudinary\n\n  // @servercn:begin file-upload-imagekit\n  // @servercn:end file-upload-imagekit\n});\n\nexport type Env = z.infer<typeof envSchema>;\n\nconst result = envSchema.safeParse(process.env);\n\nif (!result.success) {\n  console.error(\"❌ Invalid environment configuration\");\n  console.error(z.prettifyError(result.error));\n  process.exit(1);\n}\n\nexport const env: Readonly<Env> = Object.freeze(result.data);\n\nexport default env;\n"
                 },
                 {
                   "type": "file",
@@ -244,7 +244,7 @@
                 {
                   "type": "file",
                   "path": "src/shared/configs/env.ts",
-                  "content": "import \"dotenv-flow/config\";\nimport { z } from \"zod\";\n\nexport const envSchema = z.object({\n  NODE_ENV: z\n    .enum([\"development\", \"test\", \"production\"])\n    .default(\"development\"),\n\n  PORT: z.string().regex(/^\\d+$/, \"PORT must be a number\").transform(Number),\n\n  DATABASE_URL: z.url(),\n\n  LOG_LEVEL: z\n    .enum([\"fatal\", \"error\", \"warn\", \"info\", \"debug\", \"trace\"])\n    .default(\"info\"),\n\n  CORS_ORIGIN: z.string().optional()\n});\n\nexport type Env = z.infer<typeof envSchema>;\n\nconst result = envSchema.safeParse(process.env);\n\nif (!result.success) {\n  console.error(\"❌ Invalid environment configuration\");\n  console.error(z.prettifyError(result.error));\n  process.exit(1);\n}\n\nexport const env: Readonly<Env> = Object.freeze(result.data);\n\nexport default env;\n"
+                  "content": "import \"dotenv-flow/config\";\nimport { z } from \"zod\";\n\nexport const envSchema = z.object({\n  NODE_ENV: z\n    .enum([\"development\", \"test\", \"production\"])\n    .default(\"development\"),\n\n  PORT: z.string().regex(/^\\d+$/, \"PORT must be a number\").transform(Number),\n\n  DATABASE_URL: z.url(),\n\n  LOG_LEVEL: z\n    .enum([\"fatal\", \"error\", \"warn\", \"info\", \"debug\", \"trace\"])\n    .default(\"info\"),\n\n  CORS_ORIGIN: z.string().optional(),\n\n  // @servercn:begin oauth-google\n  // @servercn:end oauth-google\n\n  // @servercn:begin oauth-github\n  // @servercn:end oauth-github\n\n  // @servercn:begin rbac\n  // @servercn:end rbac\n\n  // @servercn:begin jwt-utils\n  // @servercn:end jwt-utils\n\n  // @servercn:begin file-upload-cloudinary\n  // @servercn:end file-upload-cloudinary\n\n  // @servercn:begin file-upload-imagekit\n  // @servercn:end file-upload-imagekit\n});\n\nexport type Env = z.infer<typeof envSchema>;\n\nconst result = envSchema.safeParse(process.env);\n\nif (!result.success) {\n  console.error(\"❌ Invalid environment configuration\");\n  console.error(z.prettifyError(result.error));\n  process.exit(1);\n}\n\nexport const env: Readonly<Env> = Object.freeze(result.data);\n\nexport default env;\n"
                 },
                 {
                   "type": "file",

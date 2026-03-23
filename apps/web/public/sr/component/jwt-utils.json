@@ -27,7 +27,7 @@
                 {
                   "type": "file",
                   "path": "src/configs/env.ts",
-                  "content": "interface Config {\n  JWT_REFRESH_SECRET: string;\n  JWT_ACCESS_SECRET: string;\n}\n\nconst env: Config = {\n  JWT_REFRESH_SECRET: process.env.JWT_ACCESS_SECRET!,\n  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET!\n};\n\nexport default env;\n"
+                  "content": "// @servercn:begin jwt-utils\n  JWT_ACCESS_SECRET: z.string(),\n  JWT_REFRESH_SECRET: z.string(),\n// @servercn:end jwt-utils\n"
                 }
               ]
             },
@@ -41,7 +41,7 @@
                 {
                   "type": "file",
                   "path": "src/shared/configs/env.ts",
-                  "content": "interface Config {\n  JWT_REFRESH_SECRET: string;\n  JWT_ACCESS_SECRET: string;\n}\n\nconst env: Config = {\n  JWT_REFRESH_SECRET: process.env.JWT_ACCESS_SECRET!,\n  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET!\n};\n\nexport default env;\n"
+                  "content": "// @servercn:begin jwt-utils\n  JWT_ACCESS_SECRET: z.string(),\n  JWT_REFRESH_SECRET: z.string(),\n// @servercn:end jwt-utils\n"
                 }
               ]
             }

@@ -97,7 +97,7 @@ Slugs that support `add <slug> --merge` and **which project file** must contain 
 
 See also `packages/templates/node/express/component/README.md` for how components are grouped.
 
-**Regression subset (merge-critical):** the canonical list of merge-capable Express slugs is `EXPRESS_MERGE_SLUGS` in `packages/cli/src/constants/express-merge-slots.ts` (currently `rate-limiter`, `security-header`, `async-handler`, `request-validator`, `verify-auth-middleware`). CI / local regression for markers and foundation layout: from repo root run `npm run test:cli-express-merge` (runs all CLI selftests in that package). A full `init` + `add --merge` E2E in a temp directory is optional and not required for that script.
+**Regression subset (merge-critical):** marker IDs live in `EXPRESS_MERGE_SLUGS` and merge-capable component slugs live in `EXPRESS_MERGE_COMPONENT_SLUGS` in `packages/cli/src/constants/express-merge-slots.ts` (OAuth: `oauth-google` / `oauth-github` via `add oauth --merge`; env Phase B: `rbac`, `jwt-utils`, `file-upload-cloudinary`, `file-upload-imagekit` via `add rbac|jwt-utils|file-upload --merge`). CI / local regression for markers and foundation layout: from repo root run `npm run test:cli-express-merge` (runs all CLI selftests in that package). A full `init` + `add --merge` E2E in a temp directory is optional and not required for that script.
 
 ## 🚀 Submitting Changes
 

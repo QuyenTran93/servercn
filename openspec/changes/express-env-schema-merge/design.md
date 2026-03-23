@@ -34,4 +34,44 @@ Merge marker hiện chỉ áp dụng cho `app.ts` / `routes/index.ts`. File `env
 
 ## Open Questions
 
-- Marker id chính xác cho OAuth GitHub (registry slug vs `oauth-github`) — **chốt trong task spike** sau khi đọc lệnh `add` + variant.
+- (Resolved) Marker id for OAuth GitHub env merge is `oauth` (component slug), because `add` calls marker merge with `component.slug` even when provider variant is selected.
+
+## Spike Output (Task 1)
+
+### Marker id for pilot (`oauth/github`)
+
+- **Chosen marker id:** `oauth`
+- **Reason:** marker merge uses the registry component slug (`component.slug`) as merge id in `copy.ts` / `add`, and OAuth providers are variants under the same `oauth` component.
+- **Command shape:** `npx servercn-cli add oauth --merge` and pick provider `github`.
+
+### Inner merge convention (single rule for pilot + rollout)
+
+- Keep marker blocks **inside** `envSchema = z.object({ ... })`.
+- Foundation keeps an empty slot:
+  - `// @servercn:begin oauth`
+  - `// @servercn:end oauth`
+- Component ships a **merge-only fragment** (single begin/end block) whose inner body is only schema fields:
+  - `GITHUB_CLIENT_ID: z.string(),`
+  - `GITHUB_CLIENT_SECRET: z.string(),`
+  - `GITHUB_REDIRECT_URI: z.url()`
+- `applyMarkerMerge` then replaces only marker inner content; `safeParse(process.env)` flow remains unchanged and TypeScript parsing stays valid.
+
+### Before/after splice example
+
+- **Before (foundation slot empty):**
+  - `CORS_ORIGIN: z.string(),`
+  - `// @servercn:begin oauth`
+  - `// @servercn:end oauth`
+- **After (`add oauth --merge`):**
+  - `CORS_ORIGIN: z.string(),`
+  - `// @servercn:begin oauth`
+  - `GITHUB_CLIENT_ID: z.string(),`
+  - `GITHUB_CLIENT_SECRET: z.string(),`
+  - `GITHUB_REDIRECT_URI: z.url()`
+  - `// @servercn:end oauth`
+
+### Zod alignment check
+
+- Express foundations already use `import { z } from "zod"` in env files.
+- Foundation registry runtime dependencies include `zod` (e.g. `packages/registry/foundation/express-starter.json`).
+- Monorepo root `package.json` does not need a pinned `zod` dependency for this flow because generated projects install foundation/component runtime deps from registry metadata.
