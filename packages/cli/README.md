@@ -4,7 +4,7 @@ Servercn is a component registry for building Node.js backends by composition.
 
 > The shadcn/ui philosophy for Node.js backends
 
-Visit [Servercn](https://quyen93-servercn-web.vercel.app) for more information.
+Visit [Servercn](https://servercn-vercel.vercel.app) for more information.
 
 [GitHub Link](https://github.com/akkaldhami/servercn)
 
@@ -126,4 +126,4 @@ For OAuth variant-aware env merge, legacy projects that only have `// @servercn:
 
 From this package: `npm run test:merge-marker` (merge helper), `npm run test:express-merge-foundation` (foundation markers), `npm run test:express-merge-slugs` (slug registry). Or run `npm run test:express-merge-all` for all three. From the monorepo root: `npm run test:cli-express-merge`.
 
-Visit [Servercn](https://quyen93-servercn-web.vercel.app) for more information.
+Visit [Servercn](https://servercn-vercel.vercel.app) for more information.

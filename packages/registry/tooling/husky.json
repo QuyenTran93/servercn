@@ -1,5 +1,5 @@
 {
-  "$schema": "https://quyen93-servercn-web.vercel.app/schema/tooling.registry.json",
+  "$schema": "https://servercn-vercel.vercel.app/schema/tooling.registry.json",
   "slug": "husky",
   "templates": {
     "base": "husky/base"

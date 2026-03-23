@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://quyen93-servercn-web.vercel.app"; // change to your domain
+  const baseUrl = "https://servercn-vercel.vercel.app"; // change to your domain
 
   return {
     rules: [

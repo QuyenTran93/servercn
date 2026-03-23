@@ -1,5 +1,5 @@
 {
-  "$schema": "https://quyen93-servercn-web.vercel.app/schema/foundation.registry.json",
+  "$schema": "https://servercn-vercel.vercel.app/schema/foundation.registry.json",
   "slug": "express-starter",
   "runtimes": {
     "node": {
