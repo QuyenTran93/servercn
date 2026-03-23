@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://quyen93-servercn-web.vercel.app/schema/registry.json",
+  "$id": "https://servercn-vercel.vercel.app/schema/registry.json",
   "title": "Servercn Registry Schema",
   "description": "Schema definition for the Servercn documentation and registry configuration file.",
   "type": "object",

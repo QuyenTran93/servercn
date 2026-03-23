@@ -3,7 +3,7 @@ import packageJson from "../../package.json";
 //? For local development
 // export const SERVERCN_URL = "http://localhost:3000";
 
-export const SERVERCN_URL = "https://quyen93-servercn-web.vercel.app";
+export const SERVERCN_URL = "https://servercn-vercel.vercel.app";
 
 export const SERVERCN_CONFIG_FILE = "servercn.config.json" as const;
 
