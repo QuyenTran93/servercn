@@ -5,32 +5,32 @@
     {
       "name": "registry:servercn.config",
       "description": "Configuration schema for a Servercn project",
-      "url": "https://servercn.vercel.app/schema/servercn.config.json"
+      "url": "https://quyen93-servercn-web.vercel.app/schema/servercn.config.json"
     },
     {
       "name": "registry:component",
       "description": "Registry schema that defines individual Servercn components",
-      "url": "https://servercn.vercel.app/schema/component.registry.json"
+      "url": "https://quyen93-servercn-web.vercel.app/schema/component.registry.json"
     },
     {
       "name": "registry:blueprint",
       "description": "Registry schema that defines Servercn blueprints",
-      "url": "https://servercn.vercel.app/schema/blueprint.registry.json"
+      "url": "https://quyen93-servercn-web.vercel.app/schema/blueprint.registry.json"
     },
     {
       "name": "registry:foundation",
       "description": "Registry schema that defines Servercn project foundations",
-      "url": "https://servercn.vercel.app/schema/foundation.registry.json"
+      "url": "https://quyen93-servercn-web.vercel.app/schema/foundation.registry.json"
     },
     {
       "name": "registry:tooling",
       "description": "Registry schema that defines Servercn development tooling",
-      "url": "https://servercn.vercel.app/schema/tooling.registry.json"
+      "url": "https://quyen93-servercn-web.vercel.app/schema/tooling.registry.json"
     },
     {
       "name": "registry:schema",
       "description": "Registry schema that defines database and domain schemas",
-      "url": "https://servercn.vercel.app/schema/schema.registry.json"
+      "url": "https://quyen93-servercn-web.vercel.app/schema/schema.registry.json"
     }
   ]
 }

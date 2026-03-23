@@ -1,5 +1,5 @@
 {
-  "$schema": "https://servercn.vercel.app/schema/tooling.registry.json",
+  "$schema": "https://quyen93-servercn-web.vercel.app/schema/tooling.registry.json",
   "slug": "prettier",
   "templates": {
     "base": "prettier/base"

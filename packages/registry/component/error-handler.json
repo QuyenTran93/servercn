@@ -1,5 +1,5 @@
 {
-  "$schema": "https://servercn.vercel.app/schema/component.registry.json",
+  "$schema": "https://quyen93-servercn-web.vercel.app/schema/component.registry.json",
   "slug": "error-handler",
   "runtimes": {
     "node": {

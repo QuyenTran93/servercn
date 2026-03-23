@@ -1,7 +1,7 @@
 {
-  "$schema": "https://servercn.vercel.app/schema/registry.json",
+  "$schema": "https://quyen93-servercn-web.vercel.app/schema/registry.json",
   "name": "Servercn",
-  "homepage": "https://servercn.vercel.app",
+  "homepage": "https://quyen93-servercn-web.vercel.app",
   "author": "Akkal Dhami",
   "items": [
     {

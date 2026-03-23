@@ -13,7 +13,7 @@ export const X_URL = "https://x.com/AavashDhami2127";
 
 export const GITHUB_URL = `${BASE_GITHUB_URL}/servercn`;
 
-export const SERVERCN_URL = "https://servercn.vercel.app";
+export const SERVERCN_URL = "https://quyen93-servercn-web.vercel.app";
 
 export const AI_QUERIES = [
   {
