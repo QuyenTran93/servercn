@@ -25,7 +25,7 @@ import { spinner } from "@/utils/spinner";
 import { execa } from "execa";
 import { updateEnvKeys } from "@/utils/update-env";
 import { getToolingChoices, getToolingDepsFromChoices } from "@/utils/tooling";
-import { isExpressMergeSlug } from "@/constants/express-merge-slots";
+import { isExpressMergeComponentSlug } from "@/constants/express-merge-slots";
 
 export async function add(registryItemName: string, options: AddOptions = {}) {
   await assertInitialized();
@@ -59,7 +59,7 @@ export async function add(registryItemName: string, options: AddOptions = {}) {
 
   if (
     config.stack.framework === "express" &&
-    isExpressMergeSlug(component.slug) &&
+    isExpressMergeComponentSlug(component.slug) &&
     !effectiveMerge &&
     !options.force
   ) {
@@ -195,6 +195,7 @@ export async function scaffoldFiles({
       templateDir,
       targetDir,
       registryItemName,
+      selectedProvider,
       conflict: options.force ? "overwrite" : "skip",
       merge: options.merge
     });

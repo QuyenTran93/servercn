@@ -12,16 +12,54 @@ export const EXPRESS_MERGE_FOUNDATIONS = [
 ] as const;
 export type ExpressMergeArchitecture = "mvc" | "feature";
 
-/** Slug == marker id in // @servercn:begin|end <slug> */
+/** Marker ids used in // @servercn:begin|end <marker-id> */
 export const EXPRESS_MERGE_SLUGS = [
   "rate-limiter",
   "security-header",
   "async-handler",
   "request-validator",
-  "verify-auth-middleware"
+  "verify-auth-middleware",
+  "oauth-google",
+  "oauth-github",
+  "rbac",
+  "jwt-utils",
+  "file-upload-cloudinary",
+  "file-upload-imagekit"
 ] as const;
 
 export type ExpressMergeSlug = (typeof EXPRESS_MERGE_SLUGS)[number];
+const EXPRESS_APP_ROUTE_MERGE_SLUGS: readonly ExpressMergeSlug[] = [
+  "rate-limiter",
+  "security-header",
+  "request-validator",
+  "rbac",
+  "async-handler",
+  "verify-auth-middleware"
+];
+/** Env file markers (order: OAuth providers, then rbac, jwt, upload variants). */
+const EXPRESS_ENV_MERGE_SLUGS: readonly ExpressMergeSlug[] = [
+  "oauth-google",
+  "oauth-github",
+  "rbac",
+  "jwt-utils",
+  "file-upload-cloudinary",
+  "file-upload-imagekit"
+];
+
+/** Components that support add <slug> --merge on express foundations. */
+export const EXPRESS_MERGE_COMPONENT_SLUGS = [
+  "rate-limiter",
+  "security-header",
+  "async-handler",
+  "request-validator",
+  "verify-auth-middleware",
+  "oauth",
+  "rbac",
+  "jwt-utils",
+  "file-upload"
+] as const;
+export type ExpressMergeComponentSlug =
+  (typeof EXPRESS_MERGE_COMPONENT_SLUGS)[number];
 
 export type ExpressMergeSlot = {
   /** Path relative to project root (e.g. src/app.ts) */
@@ -40,7 +78,11 @@ export const EXPRESS_MERGE_SLOTS: Record<
   mvc: [
     {
       file: "src/app.ts",
-      slugs: EXPRESS_MERGE_SLUGS
+      slugs: EXPRESS_APP_ROUTE_MERGE_SLUGS
+    },
+    {
+      file: "src/configs/env.ts",
+      slugs: EXPRESS_ENV_MERGE_SLUGS
     }
   ],
   feature: [
@@ -50,11 +92,47 @@ export const EXPRESS_MERGE_SLOTS: Record<
     },
     {
       file: "src/routes/index.ts",
-      slugs: ["request-validator", "async-handler", "verify-auth-middleware"]
+      slugs: ["request-validator", "rbac", "async-handler", "verify-auth-middleware"]
+    },
+    {
+      file: "src/shared/configs/env.ts",
+      slugs: EXPRESS_ENV_MERGE_SLUGS
     }
   ]
 };
 
-export function isExpressMergeSlug(s: string): s is ExpressMergeSlug {
+export function isExpressMergeComponentSlug(
+  s: string
+): s is ExpressMergeComponentSlug {
+  return (EXPRESS_MERGE_COMPONENT_SLUGS as readonly string[]).includes(s);
+}
+
+export function isExpressMergeMarkerSlug(s: string): s is ExpressMergeSlug {
   return (EXPRESS_MERGE_SLUGS as readonly string[]).includes(s);
+}
+
+/**
+ * Resolve marker ids for merge flow. OAuth is variant-aware and maps to provider markers.
+ */
+export function resolveExpressMergeMarkerIds(
+  componentSlug: string,
+  selectedProvider?: string
+): readonly ExpressMergeSlug[] {
+  if (componentSlug === "oauth") {
+    if (selectedProvider === "google") return ["oauth-google"];
+    if (selectedProvider === "github") return ["oauth-github"];
+    if (selectedProvider === "google-github") {
+      return ["oauth-google", "oauth-github"];
+    }
+    return [];
+  }
+  if (componentSlug === "file-upload") {
+    if (selectedProvider === "cloudinary") return ["file-upload-cloudinary"];
+    if (selectedProvider === "imagekit") return ["file-upload-imagekit"];
+    return [];
+  }
+  if (isExpressMergeMarkerSlug(componentSlug)) {
+    return [componentSlug];
+  }
+  return [];
 }

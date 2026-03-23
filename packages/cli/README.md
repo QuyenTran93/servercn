@@ -64,7 +64,7 @@ npx servercn-cli add logger jwt-utils
 
 ### After `init` with an Express foundation: prefer `--merge` for wiring
 
-If your project used **Express** from any starter that ships merge markers (same layout as `express-starter`: see `EXPRESS_MERGE_FOUNDATIONS` in `express-merge-slots.ts`) and the component slug supports merge (`rate-limiter`, `security-header`, `async-handler`, `request-validator`, `verify-auth-middleware`), run:
+If your project used **Express** from any starter that ships merge markers (same layout as `express-starter`: see `EXPRESS_MERGE_FOUNDATIONS` in `express-merge-slots.ts`) and the component slug supports merge (`rate-limiter`, `security-header`, `async-handler`, `request-validator`, `verify-auth-middleware`, `oauth`, `rbac`, `jwt-utils`, `file-upload`), run:
 
 ```bash
 npx servercn-cli add <slug> --merge
@@ -81,7 +81,7 @@ By default, `add` **skips** files that already exist so your edits are preserved
   `// @servercn:begin <slug>` … `// @servercn:end <slug>`  
   The CLI replaces **only** the inner region in the existing file. Your code **outside** those markers stays intact.
 
-**Components with merge wiring in the registry (slug = marker id):**
+**Components with merge wiring in the registry (`oauth` maps to provider markers):**
 
 Maintainers: the matrix below is defined in code as `EXPRESS_MERGE_SLOTS` in [`src/constants/express-merge-slots.ts`](./src/constants/express-merge-slots.ts). Update that file, **every** foundation in `EXPRESS_MERGE_FOUNDATIONS`, component merge fragments, and this table together.
 
@@ -92,6 +92,10 @@ Maintainers: the matrix below is defined in code as `EXPRESS_MERGE_SLOTS` in [`s
 | `async-handler` | `src/app.ts` (MVC) or `src/routes/index.ts` (feature architecture) |
 | `request-validator` | `src/app.ts` (MVC) or `src/routes/index.ts` (feature architecture) |
 | `verify-auth-middleware` | `src/app.ts` (MVC) or `src/routes/index.ts` (feature architecture) |
+| `oauth` | `src/configs/env.ts` (MVC) or `src/shared/configs/env.ts` (feature), markers `oauth-google` / `oauth-github` (variant-aware) |
+| `rbac` | `src/app.ts` (MVC) or `src/routes/index.ts` (feature) for route wiring, plus env paths (`src/configs/env.ts` or `src/shared/configs/env.ts`), marker `rbac` |
+| `jwt-utils` | same env paths, marker `jwt-utils` |
+| `file-upload` | same env paths, markers `file-upload-cloudinary` or `file-upload-imagekit` (variant-aware) |
 
 Those Express foundations ship **empty** marker blocks for these slugs where needed. Older projects must add the same blocks manually (or use `--force`).
 
@@ -103,7 +107,13 @@ npx servercn-cli add security-header --merge
 npx servercn-cli add async-handler --merge
 npx servercn-cli add request-validator --merge
 npx servercn-cli add verify-auth-middleware --merge
+npx servercn-cli add oauth --merge
+npx servercn-cli add rbac --merge
+npx servercn-cli add jwt-utils --merge
+npx servercn-cli add file-upload --merge
 ```
+
+For OAuth variant-aware env merge, legacy projects that only have `// @servercn:begin oauth` must migrate markers to `oauth-google` / `oauth-github` first (`doctor` warns; no auto-convert).
 
 From this package: `npm run test:merge-marker` (merge helper), `npm run test:express-merge-foundation` (foundation markers), `npm run test:express-merge-slugs` (slug registry). Or run `npm run test:express-merge-all` for all three. From the monorepo root: `npm run test:cli-express-merge`.
 

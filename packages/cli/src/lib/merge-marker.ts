@@ -37,7 +37,7 @@ export function extractMarkerInner(
   const begin = markerBeginLine(slug);
   const end = markerEndLine(slug);
   const re = new RegExp(
-    `^${escapeRegExp(begin)}\\s*\\n([\\s\\S]*?)\\n${escapeRegExp(end)}\\s*$`
+    `^\\s*${escapeRegExp(begin)}\\s*\\n([\\s\\S]*?)\\n?\\s*${escapeRegExp(end)}\\s*$`
   );
   const m = n.match(re);
   return m ? m[1] : null;
@@ -63,16 +63,24 @@ export function applyMarkerMerge(
   const normalizedDest = normalizeEol(dest);
   const begin = markerBeginLine(slug);
   const end = markerEndLine(slug);
-  const blockRe = new RegExp(
-    `${escapeRegExp(begin)}\\s*\\n([\\s\\S]*?)\\n${escapeRegExp(end)}`,
-    "m"
-  );
-  if (!blockRe.test(normalizedDest)) {
+  const lines = normalizedDest.split("\n");
+  const beginIdx = lines.findIndex(line => line.trim() === begin);
+  if (beginIdx < 0) {
     return { ok: false, reason: "missing_marker_in_dest" };
   }
-  const next = normalizedDest.replace(
-    blockRe,
-    `${begin}\n${inner}\n${end}`
+  const endIdx = lines.findIndex(
+    (line, idx) => idx > beginIdx && line.trim() === end
   );
+  if (endIdx < 0) {
+    return { ok: false, reason: "missing_marker_in_dest" };
+  }
+
+  const innerLines = inner.length > 0 ? inner.split("\n") : [];
+  const nextLines = [
+    ...lines.slice(0, beginIdx + 1),
+    ...innerLines,
+    ...lines.slice(endIdx)
+  ];
+  const next = nextLines.join("\n");
   return { ok: true, content: next };
 }

@@ -38,6 +38,7 @@ export interface CopyOptions {
   templateDir: string;
   targetDir: string;
   registryItemName: string;
+  selectedProvider?: string;
   conflict?: ConflictStrategy;
   dryRun?: boolean;
   merge?: boolean;

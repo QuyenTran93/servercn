@@ -7,13 +7,54 @@ import {
 } from "@/constants/app.constants";
 import {
   EXPRESS_MERGE_SLOTS,
+  type ExpressMergeSlug,
   type ExpressMergeArchitecture
 } from "@/constants/express-merge-slots";
-import { markerBeginLine } from "@/lib/merge-marker";
+import { markerBeginLine, markerEndLine } from "@/lib/merge-marker";
+import { normalizeEol } from "@/utils/normalize-eol";
 import type { Architecture, IServerCNConfig } from "@/types";
 
 const README_UPGRADE_ANCHOR =
   "https://github.com/AkkalDhami/servercn/blob/main/packages/cli/README.md#existing-projects-upgrades--template-drift";
+
+function addCommandForMarker(slug: ExpressMergeSlug): string {
+  if (slug === "oauth-google" || slug === "oauth-github") {
+    return "servercn add oauth --merge";
+  }
+  if (slug === "file-upload-cloudinary" || slug === "file-upload-imagekit") {
+    return "servercn add file-upload --merge";
+  }
+  return `servercn add ${slug} --merge`;
+}
+
+function hasTrimmedLine(text: string, needle: string): boolean {
+  const n = normalizeEol(text);
+  return n.split("\n").some(line => line.trim() === needle);
+}
+
+/** True when both begin and end marker lines exist (trimmed line match). */
+function markerPairPresent(text: string, slug: ExpressMergeSlug): boolean {
+  return (
+    hasTrimmedLine(text, markerBeginLine(slug)) &&
+    hasTrimmedLine(text, markerEndLine(slug))
+  );
+}
+
+function hasLegacyOAuthMarkerBlock(text: string): boolean {
+  const n = normalizeEol(text);
+  return n.split("\n").some(line => line.trim() === "// @servercn:begin oauth");
+}
+
+const OAUTH_ENV_MARKER_SLUGS: readonly ExpressMergeSlug[] = [
+  "oauth-google",
+  "oauth-github"
+];
+
+function isExpressEnvMergeFile(file: string): boolean {
+  return (
+    file === "src/configs/env.ts" || file === "src/shared/configs/env.ts"
+  );
+}
 
 function printStaticGuide() {
   logger.section("Post-init projects & upstream changes");
@@ -62,13 +103,66 @@ async function checkMergeMarkers(config: IServerCNConfig, projectRoot: string) {
       continue;
     }
     const text = await fs.readFile(filePath, "utf8");
-    for (const slug of slugs) {
-      const line = markerBeginLine(slug);
-      if (!text.includes(line)) {
+
+    if (isExpressEnvMergeFile(file) && slugs.includes("oauth-google")) {
+      const oauthMissing = OAUTH_ENV_MARKER_SLUGS.filter(
+        s => slugs.includes(s) && !markerPairPresent(text, s)
+      );
+      if (oauthMissing.length > 0) {
+        const legacy = hasLegacyOAuthMarkerBlock(text);
+        const missingDesc = oauthMissing
+          .map(s => `${markerBeginLine(s)} / ${markerEndLine(s)}`)
+          .join("; ");
         logger.warn(
-          `Missing ${line} in ${file} — add it (see README, matrix: packages/cli/src/constants/express-merge-slots.ts) before using add ${slug} --merge.`
+          `OAuth env merge markers incomplete in ${file}. Missing or incomplete pair(s): ${missingDesc}. Add empty provider blocks inside envSchema (see current express-starter foundation), then run \`servercn add oauth --merge\` (use \`--local\` if templates are not published yet). Matrix: packages/cli/src/constants/express-merge-slots.ts.`
+        );
+        if (legacy) {
+          logger.warn(
+            `Legacy \`// @servercn:begin oauth\` still present in ${file} — replace with separate \`oauth-google\` and \`oauth-github\` marker pairs (warn-only, no auto-convert).`
+          );
+        }
+      }
+      const otherEnvSlugs = slugs.filter(
+        s => !OAUTH_ENV_MARKER_SLUGS.includes(s)
+      );
+      for (const slug of otherEnvSlugs) {
+        if (markerPairPresent(text, slug)) {
+          continue;
+        }
+        const begin = markerBeginLine(slug);
+        const end = markerEndLine(slug);
+        const hasBegin = hasTrimmedLine(text, begin);
+        const hasEnd = hasTrimmedLine(text, end);
+        const detail =
+          hasBegin && !hasEnd
+            ? `Missing ${end} (begin exists).`
+            : !hasBegin && hasEnd
+              ? `Missing ${begin} (end exists).`
+              : `Missing ${begin} and ${end}.`;
+        logger.warn(
+          `${detail} File: ${file}. Fix before ${addCommandForMarker(slug)}. See README / express-merge-slots.ts.`
         );
       }
+      continue;
+    }
+
+    for (const slug of slugs) {
+      if (markerPairPresent(text, slug)) {
+        continue;
+      }
+      const begin = markerBeginLine(slug);
+      const end = markerEndLine(slug);
+      const hasBegin = hasTrimmedLine(text, begin);
+      const hasEnd = hasTrimmedLine(text, end);
+      const detail =
+        hasBegin && !hasEnd
+          ? `Missing ${end} (begin exists).`
+          : !hasBegin && hasEnd
+            ? `Missing ${begin} (end exists).`
+            : `Missing ${begin} and ${end}.`;
+      logger.warn(
+        `${detail} File: ${file}. Fix before ${addCommandForMarker(slug)}. See README / express-merge-slots.ts.`
+      );
     }
   }
 }
@@ -89,7 +183,7 @@ export async function doctor() {
 
   logger.section("Merge marker sanity (Express)");
   logger.log(
-    "Missing lines mean `add <slug> --merge` cannot splice wiring until you add the same marker blocks as the current Express foundation templates (see `EXPRESS_MERGE_FOUNDATIONS` in express-merge-slots.ts)."
+    "Missing or broken marker pairs mean `servercn add <slug> --merge` cannot splice wiring. Env file merges use multiple marker pairs inside envSchema (OAuth providers, rbac, jwt-utils, file-upload variants — see `EXPRESS_MERGE_FOUNDATIONS` + express-merge-slots.ts)."
   );
   logger.break();
   await checkMergeMarkers(config, projectRoot);
