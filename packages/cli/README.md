@@ -99,6 +99,15 @@ Maintainers: the matrix below is defined in code as `EXPRESS_MERGE_SLOTS` in [`s
 
 Those Express foundations ship **empty** marker blocks for these slugs where needed. Older projects must add the same blocks manually (or use `--force`).
 
+**Merge-critical overlap paths (Phase C guard):**
+- `request-validator`, `verify-auth-middleware`, `rbac` may overlap on `src/routes/user.routes.ts` (MVC) and `src/modules/user/user.routes.ts` (feature).
+- When `--merge` is requested and those files already exist but the source is not merge-only for the slug marker, CLI now fails fast with an actionable error (instead of silent skip).
+
+**Dependency-aware add flow (ordering/conflict guard):**
+- Express overlap-prone components now use dependency rules in CLI (`requiresAll`, `conflictsWith`, soft ordering warnings).
+- Example: `rbac` currently requires `jwt-utils` first, and conflicts with `verify-auth-middleware`.
+- If hard rules are violated, `add` fails early with suggested command order; soft rules emit warnings.
+
 `--merge` is **ignored** when `--force` is set.
 
 ```bash

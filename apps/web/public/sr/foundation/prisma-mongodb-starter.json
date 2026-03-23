@@ -53,18 +53,18 @@
                 },
                 {
                   "type": "file",
-                  "path": "prisma/schema.prisma",
-                  "content": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User { \n  id    String  @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email String  @unique\n  name  String?\n  password String\n} \n"
-                },
-                {
-                  "type": "file",
                   "path": "src/server.ts",
                   "content": "import app from \"./app\";\nimport env from \"./configs/env\";\nimport { logger } from \"./utils/logger\";\nimport { configureGracefulShutdown } from \"./utils/shutdown\";\n\nconst port = env.PORT || 9000;\n\nconst server = app.listen(port, () => {\n  logger.info(`[server]: Server is running at http://localhost:${port}`);\n  logger.info(`[server]: Environment: ${env.NODE_ENV}`);\n  logger.info(\n    `[server]: Swagger docs are available at http://localhost:${port}/api/docs`\n  );\n});\n\nconfigureGracefulShutdown(server);\n"
                 },
                 {
                   "type": "file",
                   "path": "src/app.ts",
-                  "content": "import express, { Express, Request, Response } from \"express\";\nimport cors from \"cors\";\nimport helmet from \"helmet\";\nimport cookieParser from \"cookie-parser\";\nimport morgan from \"morgan\";\nimport { notFoundHandler } from \"./middlewares/not-found-handler\";\nimport { setupSwagger } from \"./configs/swagger\";\nimport { errorHandler } from \"./middlewares/error-handler\";\nimport healthRoutes from \"./routes/health.routes\";\nimport env from \"./configs/env\";\nimport sourceMapSupport from \"source-map-support\";\nsourceMapSupport.install();\n\nconst app: Express = express();\n\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\napp.use(\n  cors({\n    origin: env.CORS_ORIGIN,\n    methods: [\"GET\", \"POST\", \"PUT\", \"DELETE\", \"PATCH\", \"OPTIONS\"],\n    allowedHeaders: [\"Content-Type\", \"Authorization\", \"X-Requested-With\"],\n    credentials: true\n  })\n);\napp.use(helmet());\napp.use(cookieParser());\napp.use(morgan(env.NODE_ENV === \"development\" ? \"dev\" : \"combined\"));\n\n//? Swagger Setup\nsetupSwagger(app);\n\n//? Routes\napp.get(\"/\", (req: Request, res: Response) => {\n  res.redirect(\"/api/health\");\n});\n\napp.use(\"/api/health\", healthRoutes);\n\n// @servercn:begin rate-limiter\n\n// @servercn:end rate-limiter\n\n// @servercn:begin security-header\n\n// @servercn:end security-header\n\n// @servercn:begin async-handler\n\n// @servercn:end async-handler\n\n// @servercn:begin request-validator\n\n// @servercn:end request-validator\n\n// @servercn:begin verify-auth-middleware\n\n// @servercn:end verify-auth-middleware\n\n// Not found handler (should be after routes)\napp.use(notFoundHandler);\n\n// Global error handler (should be last)\napp.use(errorHandler);\n\nexport default app;\n"
+                  "content": "import express, { Express, Request, Response } from \"express\";\nimport cors from \"cors\";\nimport helmet from \"helmet\";\nimport cookieParser from \"cookie-parser\";\nimport morgan from \"morgan\";\nimport { notFoundHandler } from \"./middlewares/not-found-handler\";\nimport { setupSwagger } from \"./configs/swagger\";\nimport { errorHandler } from \"./middlewares/error-handler\";\nimport healthRoutes from \"./routes/health.routes\";\nimport env from \"./configs/env\";\nimport sourceMapSupport from \"source-map-support\";\nsourceMapSupport.install();\n\nconst app: Express = express();\n\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\napp.use(\n  cors({\n    origin: env.CORS_ORIGIN,\n    methods: [\"GET\", \"POST\", \"PUT\", \"DELETE\", \"PATCH\", \"OPTIONS\"],\n    allowedHeaders: [\"Content-Type\", \"Authorization\", \"X-Requested-With\"],\n    credentials: true\n  })\n);\napp.use(helmet());\napp.use(cookieParser());\napp.use(morgan(env.NODE_ENV === \"development\" ? \"dev\" : \"combined\"));\n\n//? Swagger Setup\nsetupSwagger(app);\n\n//? Routes\napp.get(\"/\", (req: Request, res: Response) => {\n  res.redirect(\"/api/health\");\n});\n\napp.use(\"/api/health\", healthRoutes);\n\n// @servercn:begin rate-limiter\n\n// @servercn:end rate-limiter\n\n// @servercn:begin security-header\n\n// @servercn:end security-header\n\n// @servercn:begin request-validator\n\n// @servercn:end request-validator\n\n// @servercn:begin rbac\n\n// @servercn:end rbac\n\n// @servercn:begin async-handler\n\n// @servercn:end async-handler\n\n// @servercn:begin verify-auth-middleware\n\n// @servercn:end verify-auth-middleware\n\n// Not found handler (should be after routes)\napp.use(notFoundHandler);\n\n// Global error handler (should be last)\napp.use(errorHandler);\n\nexport default app;\n"
+                },
+                {
+                  "type": "file",
+                  "path": "prisma/schema.prisma",
+                  "content": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User { \n  id    String  @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email String  @unique\n  name  String?\n  password String\n} \n"
                 },
                 {
                   "type": "file",
@@ -152,6 +152,11 @@
                 },
                 {
                   "type": "file",
+                  "path": "prisma/schema.prisma",
+                  "content": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User { \n  id    String  @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email String  @unique\n  name  String?\n  password String\n}\n"
+                },
+                {
+                  "type": "file",
                   "path": "src/server.ts",
                   "content": "import app from \"./app\";\nimport env from \"./shared/configs/env\";\nimport { logger } from \"./shared/utils/logger\";\nimport { configureGracefulShutdown } from \"./shared/utils/shutdown\";\n\nconst port = env.PORT || 9000;\n\nconst server = app.listen(port, () => {\n  logger.info(`[server]: Server is running at http://localhost:${port}`);\n  logger.info(`[server]: Environment: ${env.NODE_ENV}`);\n  logger.info(\n    `[server]: Swagger docs are available at http://localhost:${port}/api/docs`\n  );\n});\n\nconfigureGracefulShutdown(server);\n"
                 },
@@ -162,18 +167,23 @@
                 },
                 {
                   "type": "file",
-                  "path": "prisma/schema.prisma",
-                  "content": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User { \n  id    String  @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email String  @unique\n  name  String?\n  password String\n}\n"
-                },
-                {
-                  "type": "file",
                   "path": "src/routes/index.ts",
-                  "content": "import { Router } from \"express\";\nimport HealthRouter from \"../modules/health/health.routes\";\n\nconst router = Router();\n\nrouter.use(\"/health\", HealthRouter);\n\n// @servercn:begin request-validator\n\n// @servercn:end request-validator\n\n// @servercn:begin async-handler\n\n// @servercn:end async-handler\n\n// @servercn:begin verify-auth-middleware\n\n// @servercn:end verify-auth-middleware\n\nexport default router;\n"
+                  "content": "import { Router } from \"express\";\nimport HealthRouter from \"../modules/health/health.routes\";\n\nconst router = Router();\n\nrouter.use(\"/health\", HealthRouter);\n\n// @servercn:begin request-validator\n\n// @servercn:end request-validator\n\n// @servercn:begin rbac\n\n// @servercn:end rbac\n\n// @servercn:begin async-handler\n\n// @servercn:end async-handler\n\n// @servercn:begin verify-auth-middleware\n\n// @servercn:end verify-auth-middleware\n\nexport default router;\n"
                 },
                 {
                   "type": "file",
                   "path": "src/docs/swagger.json",
                   "content": "{}\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/shared/middlewares/not-found-handler.ts",
+                  "content": "import { Request, Response, NextFunction } from \"express\";\nimport { ApiError } from \"../errors/api-error\";\n\nexport const notFoundHandler = (\n  req: Request,\n  res: Response,\n  next: NextFunction\n) => {\n  throw ApiError.notFound(`Route ${req.method} ${req.originalUrl} not found`);\n};\n"
+                },
+                {
+                  "type": "file",
+                  "path": "src/shared/middlewares/error-handler.ts",
+                  "content": "import { Request, Response, NextFunction } from \"express\";\nimport env from \"../../shared/configs/env\";\n\nimport { ApiError } from \"../errors/api-error\";\nimport { logger } from \"../utils/logger\";\n\nexport const errorHandler = (\n  err: Error,\n  req: Request,\n  res: Response,\n  next: NextFunction\n) => {\n  let statusCode = 500;\n  let message = \"Internal server error\";\n\n  if (err instanceof ApiError) {\n    statusCode = err.statusCode;\n    message = err.message;\n  }\n\n  logger.error(\n    err,\n    `Error: ${message} | Status: ${statusCode} | Path: ${req.method} ${req.originalUrl}`\n  );\n\n  const response = {\n    success: false,\n    message,\n    ...(env.NODE_ENV === \"development\" && { stack: err.stack })\n  };\n\n  res.status(statusCode).json(response);\n};\n"
                 },
                 {
                   "type": "file",
@@ -194,16 +204,6 @@
                   "type": "file",
                   "path": "src/shared/utils/api-response.ts",
                   "content": "import { STATUS_CODES, StatusCode } from \"../constants/status-codes\";\nimport type { Response } from \"express\";\n\ntype ApiResponseParams<T> = {\n  success: boolean;\n  message: string;\n  statusCode: StatusCode;\n  data?: T | null;\n  errors?: unknown;\n};\n\nexport class ApiResponse<T = unknown> {\n  public readonly success: boolean;\n  public readonly message: string;\n  public readonly statusCode: StatusCode;\n  public readonly data?: T | null;\n  public readonly errors?: unknown;\n\n  constructor({\n    success,\n    message,\n    statusCode,\n    data = null,\n    errors\n  }: ApiResponseParams<T>) {\n    this.success = success;\n    this.message = message;\n    this.statusCode = statusCode;\n    this.data = data;\n    this.errors = errors;\n  }\n\n  send(res: Response): Response {\n    return res.status(this.statusCode).json({\n      success: this.success,\n      message: this.message,\n      statusCode: this.statusCode,\n      ...(this.data !== undefined && { data: this.data }),\n      ...(this.errors !== undefined && { errors: this.errors })\n    });\n  }\n\n  static Success<T>(\n    res: Response,\n    message: string,\n    data?: T,\n    statusCode: StatusCode = STATUS_CODES.OK\n  ): Response {\n    return new ApiResponse<T>({\n      success: true,\n      message,\n      data,\n      statusCode\n    }).send(res);\n  }\n\n  static ok<T>(res: Response, message = \"OK\", data?: T) {\n    return ApiResponse.Success(res, message, data, STATUS_CODES.OK);\n  }\n\n  static created<T>(res: Response, message = \"Created\", data?: T) {\n    return ApiResponse.Success(res, message, data, STATUS_CODES.CREATED);\n  }\n}\n\n/*\n * Usage:\n * ApiResponse.ok(res, \"OK\", data);\n * ApiResponse.created(res, \"Created\", data);\n */\n"
-                },
-                {
-                  "type": "file",
-                  "path": "src/shared/middlewares/not-found-handler.ts",
-                  "content": "import { Request, Response, NextFunction } from \"express\";\nimport { ApiError } from \"../errors/api-error\";\n\nexport const notFoundHandler = (\n  req: Request,\n  res: Response,\n  next: NextFunction\n) => {\n  throw ApiError.notFound(`Route ${req.method} ${req.originalUrl} not found`);\n};\n"
-                },
-                {
-                  "type": "file",
-                  "path": "src/shared/middlewares/error-handler.ts",
-                  "content": "import { Request, Response, NextFunction } from \"express\";\nimport env from \"../../shared/configs/env\";\n\nimport { ApiError } from \"../errors/api-error\";\nimport { logger } from \"../utils/logger\";\n\nexport const errorHandler = (\n  err: Error,\n  req: Request,\n  res: Response,\n  next: NextFunction\n) => {\n  let statusCode = 500;\n  let message = \"Internal server error\";\n\n  if (err instanceof ApiError) {\n    statusCode = err.statusCode;\n    message = err.message;\n  }\n\n  logger.error(\n    err,\n    `Error: ${message} | Status: ${statusCode} | Path: ${req.method} ${req.originalUrl}`\n  );\n\n  const response = {\n    success: false,\n    message,\n    ...(env.NODE_ENV === \"development\" && { stack: err.stack })\n  };\n\n  res.status(statusCode).json(response);\n};\n"
                 },
                 {
                   "type": "file",

@@ -6,6 +6,7 @@ import {
   SERVERCN_URL
 } from "@/constants/app.constants";
 import {
+  EXPRESS_MERGE_CRITICAL_PATHS,
   EXPRESS_MERGE_SLOTS,
   type ExpressMergeSlug,
   type ExpressMergeArchitecture
@@ -13,6 +14,8 @@ import {
 import { markerBeginLine, markerEndLine } from "@/lib/merge-marker";
 import { normalizeEol } from "@/utils/normalize-eol";
 import type { Architecture, IServerCNConfig } from "@/types";
+import { detectInstalledExpressDependencySlugs } from "@/lib/express-component-dependency";
+import { EXPRESS_COMPONENT_DEPENDENCY_RULES } from "@/constants/express-component-dependency-rules";
 
 const README_UPGRADE_ANCHOR =
   "https://github.com/AkkalDhami/servercn/blob/main/packages/cli/README.md#existing-projects-upgrades--template-drift";
@@ -165,6 +168,54 @@ async function checkMergeMarkers(config: IServerCNConfig, projectRoot: string) {
       );
     }
   }
+
+  const criticalSlugs = Object.entries(EXPRESS_MERGE_CRITICAL_PATHS).filter(
+    ([, paths]) => paths.length > 0
+  );
+  for (const [componentSlug, criticalPaths] of criticalSlugs) {
+    for (const criticalPath of criticalPaths) {
+      const absPath = path.join(projectRoot, ...criticalPath.split("/"));
+      if (!(await fs.pathExists(absPath))) {
+        continue;
+      }
+      const text = await fs.readFile(absPath, "utf8");
+      const markerSlug = componentSlug as ExpressMergeSlug;
+      if (markerPairPresent(text, markerSlug)) {
+        continue;
+      }
+      logger.warn(
+        `Merge-critical path ${criticalPath} exists but is missing marker pair for '${componentSlug}'. Future ${addCommandForMarker(markerSlug)} may skip wiring unless this file uses merge markers for that slug.`
+      );
+    }
+  }
+}
+
+async function checkExpressDependencyRisks(
+  config: IServerCNConfig,
+  projectRoot: string
+) {
+  if (config.stack?.framework !== "express") return;
+  const installed = await detectInstalledExpressDependencySlugs(
+    projectRoot,
+    config.stack.architecture
+  );
+  for (const [slug, rule] of Object.entries(EXPRESS_COMPONENT_DEPENDENCY_RULES)) {
+    if (!installed.has(slug as keyof typeof EXPRESS_COMPONENT_DEPENDENCY_RULES)) {
+      continue;
+    }
+    const missing = (rule.requiresAll ?? []).filter(dep => !installed.has(dep));
+    if (missing.length > 0) {
+      logger.warn(
+        `Dependency risk: '${slug}' is present but missing required component(s): ${missing.join(", ")}.`
+      );
+    }
+    const conflicts = (rule.conflictsWith ?? []).filter(dep => installed.has(dep));
+    if (conflicts.length > 0) {
+      logger.warn(
+        `Conflict risk: '${slug}' overlaps with installed component(s): ${conflicts.join(", ")}.`
+      );
+    }
+  }
 }
 
 export async function doctor() {
@@ -183,9 +234,10 @@ export async function doctor() {
 
   logger.section("Merge marker sanity (Express)");
   logger.log(
-    "Missing or broken marker pairs mean `servercn add <slug> --merge` cannot splice wiring. Env file merges use multiple marker pairs inside envSchema (OAuth providers, rbac, jwt-utils, file-upload variants — see `EXPRESS_MERGE_FOUNDATIONS` + express-merge-slots.ts)."
+    "Missing or broken marker pairs mean `servercn add <slug> --merge` cannot splice wiring. Env file merges use multiple marker pairs inside envSchema (OAuth providers, rbac, jwt-utils, file-upload variants — see `EXPRESS_MERGE_FOUNDATIONS` + express-merge-slots.ts). Doctor also checks dependency/order risks for overlap-prone Express components."
   );
   logger.break();
   await checkMergeMarkers(config, projectRoot);
+  await checkExpressDependencyRisks(config, projectRoot);
   logger.break();
 }

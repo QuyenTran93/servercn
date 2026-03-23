@@ -3,6 +3,7 @@
  */
 import assert from "node:assert/strict";
 import {
+  isExpressMergeCriticalPath,
   EXPRESS_MERGE_COMPONENT_SLUGS,
   EXPRESS_MERGE_SLUGS,
   isExpressMergeComponentSlug,
@@ -38,5 +39,17 @@ assert.deepEqual(resolveExpressMergeMarkerIds("file-upload", "unknown"), []);
 
 assert.deepEqual(resolveExpressMergeMarkerIds("rbac"), ["rbac"]);
 assert.deepEqual(resolveExpressMergeMarkerIds("jwt-utils"), ["jwt-utils"]);
+assert.equal(
+  isExpressMergeCriticalPath("request-validator", "src/routes/user.routes.ts"),
+  true
+);
+assert.equal(
+  isExpressMergeCriticalPath(
+    "verify-auth-middleware",
+    "src/modules/user/user.routes.ts"
+  ),
+  true
+);
+assert.equal(isExpressMergeCriticalPath("oauth", "src/routes/user.routes.ts"), false);
 
 console.log("express-merge-slugs selftest: ok");

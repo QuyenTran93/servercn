@@ -9,6 +9,10 @@ router.use("/health", HealthRouter);
 
 // @servercn:end request-validator
 
+// @servercn:begin rbac
+
+// @servercn:end rbac
+
 // @servercn:begin async-handler
 
 // @servercn:end async-handler

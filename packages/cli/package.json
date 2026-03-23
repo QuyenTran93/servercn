@@ -14,7 +14,8 @@
     "test:merge-marker": "tsx src/lib/merge-marker.selftest.ts",
     "test:express-merge-foundation": "tsx src/lib/express-merge-foundation.selftest.ts",
     "test:express-merge-slugs": "tsx src/constants/express-merge-slugs.selftest.ts",
-    "test:express-merge-all": "npm run test:merge-marker && npm run test:express-merge-foundation && npm run test:express-merge-slugs",
+    "test:express-component-deps": "tsx src/constants/express-component-dependency-rules.selftest.ts",
+    "test:express-merge-all": "npm run test:merge-marker && npm run test:express-merge-foundation && npm run test:express-merge-slugs && npm run test:express-component-deps",
     "prepublishOnly": "npm run build",
     "pub": "npm publish"
   },

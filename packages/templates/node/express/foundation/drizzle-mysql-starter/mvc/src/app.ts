@@ -46,13 +46,17 @@ app.use("/api/v1/health", healthRoutes);
 
 // @servercn:end security-header
 
-// @servercn:begin async-handler
-
-// @servercn:end async-handler
-
 // @servercn:begin request-validator
 
 // @servercn:end request-validator
+
+// @servercn:begin rbac
+
+// @servercn:end rbac
+
+// @servercn:begin async-handler
+
+// @servercn:end async-handler
 
 // @servercn:begin verify-auth-middleware
 

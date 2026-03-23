@@ -61,6 +61,31 @@ export const EXPRESS_MERGE_COMPONENT_SLUGS = [
 export type ExpressMergeComponentSlug =
   (typeof EXPRESS_MERGE_COMPONENT_SLUGS)[number];
 
+/**
+ * Paths with high overlap risk where `--merge` should never silently skip
+ * when destination already exists but source is not a merge-only fragment.
+ */
+export const EXPRESS_MERGE_CRITICAL_PATHS: Record<
+  ExpressMergeComponentSlug,
+  readonly string[]
+> = {
+  "rate-limiter": [],
+  "security-header": [],
+  "async-handler": [],
+  "request-validator": [
+    "src/routes/user.routes.ts",
+    "src/modules/user/user.routes.ts"
+  ],
+  "verify-auth-middleware": [
+    "src/routes/user.routes.ts",
+    "src/modules/user/user.routes.ts"
+  ],
+  oauth: [],
+  rbac: ["src/routes/user.routes.ts", "src/modules/user/user.routes.ts"],
+  "jwt-utils": [],
+  "file-upload": []
+};
+
 export type ExpressMergeSlot = {
   /** Path relative to project root (e.g. src/app.ts) */
   file: string;
@@ -109,6 +134,15 @@ export function isExpressMergeComponentSlug(
 
 export function isExpressMergeMarkerSlug(s: string): s is ExpressMergeSlug {
   return (EXPRESS_MERGE_SLUGS as readonly string[]).includes(s);
+}
+
+export function isExpressMergeCriticalPath(
+  componentSlug: string,
+  filePath: string
+): boolean {
+  if (!isExpressMergeComponentSlug(componentSlug)) return false;
+  const normalizedPath = filePath.replace(/\\/g, "/");
+  return EXPRESS_MERGE_CRITICAL_PATHS[componentSlug].includes(normalizedPath);
 }
 
 /**

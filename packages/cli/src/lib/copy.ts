@@ -9,6 +9,7 @@ import {
   isMergeOnlyFragment
 } from "@/lib/merge-marker";
 import {
+  EXPRESS_MERGE_CRITICAL_PATHS,
   resolveExpressMergeMarkerIds,
   type ExpressMergeSlug
 } from "@/constants/express-merge-slots";
@@ -30,6 +31,18 @@ function markerErrorHint(registryItemName: string): string {
     return " Legacy projects with // @servercn:begin oauth must migrate to oauth-google/oauth-github markers (warn-only policy).";
   }
   return "";
+}
+
+function isCriticalMergePath(
+  componentSlug: string,
+  filePath: string
+): boolean {
+  const normalizedPath = filePath.replace(/\\/g, "/");
+  const criticalPaths =
+    EXPRESS_MERGE_CRITICAL_PATHS[
+      componentSlug as keyof typeof EXPRESS_MERGE_CRITICAL_PATHS
+    ] ?? [];
+  return criticalPaths.some(p => normalizedPath.endsWith(p));
 }
 
 function getOAuthVariantEnvFragment(
@@ -125,6 +138,15 @@ export async function copyTemplate({
               continue;
             }
             const normalizedRel = relativeDestPath.replace(/\\/g, "/");
+            if (
+              mergeMarkerIds.length > 0 &&
+              isCriticalMergePath(baseRegistrySlug, normalizedRel)
+            ) {
+              logger.error(
+                `Merge failed for ${relativeDestPath}: ${baseRegistrySlug} template at this merge-critical path must be a merge-only fragment (${mergeMarkerIds.join(", ")}). Refusing silent skip; use --force only if you accept overwrite.`
+              );
+              process.exit(1);
+            }
             if (
               mergeMarkerIds.length > 0 &&
               normalizedRel.endsWith("configs/env.ts") &&
@@ -318,6 +340,20 @@ export async function cloneServercnRegistry({
         await fs.writeFile(destPath, merged.content, "utf8");
         logger.info(`MERGE: ${file.path}`);
         continue;
+      }
+
+      // Env merge must never silently fall back to skip when --merge is requested and a marker id is expected.
+      if (
+        useMerge &&
+        mergeMarkerIds.length > 0 &&
+        isCriticalMergePath(slug, file.path) &&
+        exists &&
+        !detectMergeMarkerId(templateContent, mergeMarkerIds)
+      ) {
+        logger.error(
+          `Merge failed for ${file.path}: ${slug} template at this merge-critical path must be a merge-only fragment (${mergeMarkerIds.join(", ")}). Refusing silent skip; use --force only if you accept overwrite.`
+        );
+        process.exit(1);
       }
 
       // Env merge must never silently fall back to skip when --merge is requested and a marker id is expected.

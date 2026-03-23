@@ -26,6 +26,11 @@ import { execa } from "execa";
 import { updateEnvKeys } from "@/utils/update-env";
 import { getToolingChoices, getToolingDepsFromChoices } from "@/utils/tooling";
 import { isExpressMergeComponentSlug } from "@/constants/express-merge-slots";
+import {
+  EXPRESS_COMPONENT_DEPENDENCY_RULES,
+  type ExpressDependencyRuleSlug
+} from "@/constants/express-component-dependency-rules";
+import { detectInstalledExpressDependencySlugs } from "@/lib/express-component-dependency";
 
 export async function add(registryItemName: string, options: AddOptions = {}) {
   await assertInitialized();
@@ -55,6 +60,12 @@ export async function add(registryItemName: string, options: AddOptions = {}) {
     config,
     options,
     registryItemName
+  });
+
+  await validateExpressDependencyRules({
+    config,
+    slug: component.slug,
+    effectiveMerge
   });
 
   if (
@@ -108,6 +119,56 @@ export async function add(registryItemName: string, options: AddOptions = {}) {
   logger.break();
   logger.success(`${capitalize(type)}: ${component.slug} added successfully`);
   logger.break();
+}
+
+async function validateExpressDependencyRules({
+  config,
+  slug,
+  effectiveMerge
+}: {
+  config: IServerCNConfig;
+  slug: string;
+  effectiveMerge: boolean;
+}) {
+  if (config.stack.framework !== "express") {
+    return;
+  }
+  if (!(slug in EXPRESS_COMPONENT_DEPENDENCY_RULES)) {
+    return;
+  }
+  const projectRoot = path.resolve(process.cwd(), config.project.rootDir ?? ".");
+  const installed = await detectInstalledExpressDependencySlugs(
+    projectRoot,
+    config.stack.architecture
+  );
+  const rule =
+    EXPRESS_COMPONENT_DEPENDENCY_RULES[slug as ExpressDependencyRuleSlug];
+
+  const missingHardDeps = (rule.requiresAll ?? []).filter(s => !installed.has(s));
+  if (missingHardDeps.length > 0) {
+    const suggest = missingHardDeps
+      .map(dep => `servercn add ${dep} --merge`)
+      .join(" && ");
+    logger.error(
+      `${slug} requires: ${missingHardDeps.join(", ")}. Install dependency first (recommended): ${suggest}`
+    );
+    process.exit(1);
+  }
+
+  const conflicts = (rule.conflictsWith ?? []).filter(s => installed.has(s));
+  if (conflicts.length > 0) {
+    logger.error(
+      `${slug} conflicts with installed component(s): ${conflicts.join(", ")}. Use one approach to avoid overlap drift.`
+    );
+    process.exit(1);
+  }
+
+  const warned = (rule.warnIfPresent ?? []).filter(s => installed.has(s));
+  if (warned.length > 0 && !effectiveMerge) {
+    logger.warn(
+      `${slug} has ordering overlap with installed component(s): ${warned.join(", ")}. Prefer --merge and review route/env wiring after add.`
+    );
+  }
 }
 
 //? Input Validation
