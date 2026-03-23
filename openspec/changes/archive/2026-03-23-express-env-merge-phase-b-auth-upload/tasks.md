@@ -31,7 +31,7 @@
 
 - [x] 6.1 `npm run typecheck -w packages/cli`
 - [x] 6.2 `npm run test:cli-express-merge` từ repo root
-- [ ] 6.3 (Tuỳ chọn) smoke `add` local với `--merge` trên temp dir cho một foundation + một component Phase B
+- [x] 6.3 (Tuỳ chọn) smoke `add` local với `--merge` trên temp dir cho một foundation + một component Phase B
 
 ## 7. Điều phối
 
