@@ -15,6 +15,7 @@ import type {
   FrameworkConfig
 } from "@/types";
 import { logger } from "@/utils/logger";
+import { normalizeEol } from "@/utils/normalize-eol";
 
 export async function processRegistryItem(item: any, type: RegistryType) {
   switch (type) {
@@ -202,8 +203,9 @@ async function processArchitectureSet(
 
 export async function extractFiles(templateDir: string, type: string) {
   if (!(await fs.pathExists(templateDir))) {
-    logger.warn(`Template directory not found: ${templateDir}`);
-    return [];
+    const msg = `Template directory not found: ${templateDir}`;
+    logger.error(msg);
+    throw new Error(msg);
   }
 
   const pattern = "**/*";
@@ -217,7 +219,7 @@ export async function extractFiles(templateDir: string, type: string) {
 
   for (const relativePath of filePaths) {
     const absolutePath = path.join(templateDir, relativePath);
-    const content = await fs.readFile(absolutePath, "utf8");
+    const content = normalizeEol(await fs.readFile(absolutePath, "utf8"));
 
     files.push({
       type,

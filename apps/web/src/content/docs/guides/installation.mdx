@@ -47,7 +47,17 @@ Choose the foundation that best fits your project requirements and press Enter t
 
 ### 1. Express Starter
 
-The Express Starter Foundation is the core starting block provided by servercn.
+The Express Starter Foundation is the core starting block provided by servercn. It is shipped as a **single template snapshot** (middleware, health routes, Swagger wiring, shared utilities, and empty `// @servercn:begin|end` regions for merge-capable components). **`init` does not run a chain of `add` commands** — those files are already copied into your tree.
+
+Other **Express** foundations in servercn (Mongoose, Drizzle, Prisma MongoDB, etc.) use the **same merge marker layout** where applicable; prefer `--merge` the same way after `init`.
+
+After `init`, use `add` for extra components. For Express slugs that support markers (`rate-limiter`, `security-header`, `async-handler`, `request-validator`, `verify-auth-middleware`), prefer:
+
+```bash
+npx servercn-cli add <slug> --merge
+```
+
+so wiring is merged into the marked regions. Plain `add` may **skip** files that already exist from the starter; use `--force` only if you accept overwrites. See the [CLI README](https://github.com/AkkalDhami/servercn/blob/main/packages/cli/README.md) for the full merge table and starter ↔ component overlap notes.
 
 <PackageManagerTabs command="npx servercn-cli init express-starter" />
 
@@ -115,7 +125,7 @@ This file stores your project configuration and is used by Servercn to generate 
 
 ```json
 {
-  "$schema": "https://servercn.vercel.app/schema/servercn.config.json",
+  "$schema": "https://quyen93-servercn-web.vercel.app/schema/servercn.config.json",
   "version": "1.1.4",
   "project": {
     "root": ".",
@@ -161,6 +171,10 @@ npx servercn-cli add <component-name>
 # Examples
 npx servercn-cli add error-handler
 
+# Express merge-capable slugs (after express-starter): prefer --merge
+npx servercn-cli add rate-limiter --merge
+npx servercn-cli add verify-auth-middleware --merge
+
 # Add multiple components
 npx servercn-cli add jwt-utils http-status-codes
 ```
@@ -179,6 +193,15 @@ You can manually edit <Code children="servercn.config.json" /> to change your pr
 
 After updating, new components will use the updated configuration.
 
+## Upgrades & template drift
+
+Initializing a project copies **templates from that point in time**. New CLI or registry releases may add markers, merge wiring, or change foundation files — your existing repo does **not** update by itself.
+
+- **CLI-only updates:** often no code changes needed.
+- **Template / registry changes:** check release notes; you may need to add `// @servercn:begin|end` blocks, run `add <component> --merge`, use `--force` where you accept overwrites, or start a fresh project.
+- **Foundation changes:** compare manually against the latest foundation docs; there is no automatic sync.
+
+Run **`npx servercn-cli doctor`** in your project for a quick checklist. See also the [CLI README](https://github.com/AkkalDhami/servercn/blob/main/packages/cli/README.md#existing-projects-upgrades--template-drift) (upgrade matrix).
 
 ## Next Steps
 

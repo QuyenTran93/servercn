@@ -6,7 +6,7 @@
         {
           "type": "tooling",
           "path": ".lintstagedrc.json",
-          "content": "{\r\n  \"*.{js,ts}\": [\"eslint --fix\", \"prettier --write\"]\r\n}\r\n"
+          "content": "{\n  \"*.{js,ts}\": [\"eslint --fix\", \"prettier --write\"]\n}\n"
         }
       ]
     }

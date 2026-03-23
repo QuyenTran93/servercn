@@ -12,7 +12,25 @@ export const envSchema = z.object({
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
 
-  CORS_ORIGIN: z.url()
+  CORS_ORIGIN: z.url(),
+
+  // @servercn:begin oauth-google
+  // @servercn:end oauth-google
+
+  // @servercn:begin oauth-github
+  // @servercn:end oauth-github
+
+  // @servercn:begin rbac
+  // @servercn:end rbac
+
+  // @servercn:begin jwt-utils
+  // @servercn:end jwt-utils
+
+  // @servercn:begin file-upload-cloudinary
+  // @servercn:end file-upload-cloudinary
+
+  // @servercn:begin file-upload-imagekit
+  // @servercn:end file-upload-imagekit
 });
 
 export type Env = z.infer<typeof envSchema>;

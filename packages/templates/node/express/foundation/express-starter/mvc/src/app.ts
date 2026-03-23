@@ -37,6 +37,30 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/health", healthRoutes);
 
+// @servercn:begin rate-limiter
+
+// @servercn:end rate-limiter
+
+// @servercn:begin security-header
+
+// @servercn:end security-header
+
+// @servercn:begin request-validator
+
+// @servercn:end request-validator
+
+// @servercn:begin rbac
+
+// @servercn:end rbac
+
+// @servercn:begin async-handler
+
+// @servercn:end async-handler
+
+// @servercn:begin verify-auth-middleware
+
+// @servercn:end verify-auth-middleware
+
 // Not found handler (should be after routes)
 app.use(notFoundHandler);
 

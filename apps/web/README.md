@@ -14,7 +14,7 @@
 
 ![ServerCN Components](./apps/web/public/assets/hero.png)
 
-[Visit website: https://servercn.vercel.app](https://servercn.vercel.app/docs/cli)
+[Visit website: https://quyen93-servercn-web.vercel.app](https://quyen93-servercn-web.vercel.app/docs/cli)
 
 [Join discord: https://discord.gg/2fXqnTXF8d](https://discord.gg/2fXqnTXF8d)
 
@@ -106,7 +106,7 @@ npx servercn-cli add health-check
 
 ### 3. CLI Commands
 
-[Visit for more](https://servercn.vercel.app/docs/cli)
+[Visit for more](https://quyen93-servercn-web.vercel.app/docs/cli)
 
 - List all available registry item.
 
@@ -166,7 +166,7 @@ npx servercn-cli add health-check
 
 We welcome contributions! Please feel free to submit a Pull Request.
 
-[Contributing guides](https://servercn.vercel.app/contributing)
+[Contributing guides](https://quyen93-servercn-web.vercel.app/contributing)
 
 ## 📄 License
 
@@ -179,5 +179,5 @@ This project is licensed under the [MIT License](LICENSE).
 ---
 
 <p align="center">
-  Built with 🗡️ by <a target="_blank" href="https://github.com/akkaldhami">Akkal Dhami</a> and the <a target="_blank" href="https://servercn.vercel.app/contributors">ServerCN contributors</a>
+  Built with 🗡️ by <a target="_blank" href="https://github.com/akkaldhami">Akkal Dhami</a> and the <a target="_blank" href="https://quyen93-servercn-web.vercel.app/contributors">ServerCN contributors</a>
 </p>

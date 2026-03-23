@@ -3,6 +3,7 @@ import path from "node:path";
 
 import { highlighter } from "@/utils/highlighter";
 import { logger } from "@/utils/logger";
+import { normalizeEol } from "@/utils/normalize-eol";
 import { spinner } from "@/utils/spinner";
 
 type EnvFileType =
@@ -28,9 +29,9 @@ export function updateEnvKeys({
   if (envKeys.length < 1) return;
   const envFilePath = path.join(cwd, envFile);
 
-  const existing = existsSync(envFilePath)
-    ? readFileSync(envFilePath, "utf8")
-    : "";
+  const existing = normalizeEol(
+    existsSync(envFilePath) ? readFileSync(envFilePath, "utf8") : ""
+  );
 
   const existingKeys = new Set(
     existing
@@ -66,8 +67,9 @@ export function updateEnvKeys({
 
   const block = `${header}\n` + newEnvVars.join("\n") + "\n";
 
-  const content =
-    existing.trim().length > 0 ? `${existing.trim()}\n\n${block}` : block;
+  const content = normalizeEol(
+    existing.trim().length > 0 ? `${existing.trim()}\n\n${block}` : block
+  );
 
   writeFileSync(envFilePath, content, "utf8");
 

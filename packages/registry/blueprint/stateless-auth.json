@@ -1,5 +1,5 @@
 {
-  "$schema": "https://servercn.vercel.app/schema/blueprint.registry.json",
+  "$schema": "https://quyen93-servercn-web.vercel.app/schema/blueprint.registry.json",
   "slug": "stateless-auth",
   "runtimes": {
     "node": {

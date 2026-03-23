@@ -1,13 +1,16 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response, Router } from "express";
+import { AsyncHandler } from "../../shared/utils/async-handler";
 
-export type AsyncRouteHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => Promise<unknown>;
+const router = Router();
 
-export function AsyncHandler(fn: AsyncRouteHandler) {
-  return function (req: Request, res: Response, next: NextFunction) {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-}
+router.get(
+  "/",
+  AsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    /*
+     * business logic
+     * your actual code
+     */
+  })
+);
+
+export default router;

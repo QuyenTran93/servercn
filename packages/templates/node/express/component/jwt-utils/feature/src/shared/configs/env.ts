@@ -1,11 +1,4 @@
-interface Config {
-  JWT_REFRESH_SECRET: string;
-  JWT_ACCESS_SECRET: string;
-}
-
-const env: Config = {
-  JWT_REFRESH_SECRET: process.env.JWT_ACCESS_SECRET!,
-  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET!
-};
-
-export default env;
+// @servercn:begin jwt-utils
+  JWT_ACCESS_SECRET: z.string(),
+  JWT_REFRESH_SECRET: z.string(),
+// @servercn:end jwt-utils

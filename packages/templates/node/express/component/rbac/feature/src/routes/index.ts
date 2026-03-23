@@ -1,8 +1,5 @@
-import { Router } from "express";
+// @servercn:begin rbac
 import UserRouter from "../modules/user/user.routes";
 
-const router = Router();
-
 router.use("/v1/users", UserRouter);
-
-export default router;
+// @servercn:end rbac

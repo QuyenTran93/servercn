@@ -1,5 +1,5 @@
 {
-  "$schema": "https://servercn.vercel.app/schema/foundation.registry.json",
+  "$schema": "https://quyen93-servercn-web.vercel.app/schema/foundation.registry.json",
   "slug": "mongoose-starter",
   "runtimes": {
     "node": {
